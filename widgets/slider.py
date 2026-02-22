@@ -1,12 +1,12 @@
 import math
 import pygame
+import theme
 from utils import clamp
-from constants import C_CARD_EDGE, C_TEXT
 
 
 class Slider:
-    TRACK_H  = 7
-    HANDLE_R = 11
+    TRACK_H  = theme.SLIDER_TRACK_H
+    HANDLE_R = theme.SLIDER_HANDLE_R
     ROW_H    = 44
 
     def __init__(self, x, y, w, mn, mx, init, emoji, label, color, fonts):
@@ -35,13 +35,13 @@ class Slider:
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            hx = self._vx(self._value)
+            hx  = self._vx(self._value)
             hit = (math.hypot(event.pos[0] - hx,
                               event.pos[1] - self.track.centery) <= self.HANDLE_R + 6
                    or self.track.inflate(0, 26).collidepoint(event.pos))
             if hit:
                 self.dragging = True
-                self._value = self._xv(event.pos[0])
+                self._value   = self._xv(event.pos[0])
                 return True
         elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
             if self.dragging:
@@ -55,24 +55,28 @@ class Slider:
     def draw(self, surface):
         hx = self._vx(self._value)
         f  = self.fonts
+        r  = self.HANDLE_R
+        tr = theme.SLIDER_TRACK_R
 
-        em  = f["label"].render(f"{self.emoji}  {self.label}", True, C_TEXT)
+        em  = f["label"].render(f"{self.emoji}  {self.label}", True, theme.TEXT)
         val = f["value"].render(str(self.value), True, self.color)
         surface.blit(em,  (self.track.x, self.track.y - 18))
         surface.blit(val, (self.track.right - val.get_width(), self.track.y - 19))
 
-        tr = pygame.Rect(self.track.x, self.track.centery - self.TRACK_H // 2,
-                         self.track.w, self.TRACK_H)
-        pygame.draw.rect(surface, C_CARD_EDGE, tr, border_radius=4)
+        track_rect = pygame.Rect(self.track.x, self.track.centery - self.TRACK_H // 2,
+                                 self.track.w, self.TRACK_H)
+        pygame.draw.rect(surface, theme.CARD_EDGE, track_rect, border_radius=tr)
         fw = hx - self.track.x
         if fw > 0:
             pygame.draw.rect(surface, self.color,
-                             pygame.Rect(tr.x, tr.y, fw, tr.h), border_radius=4)
+                             pygame.Rect(track_rect.x, track_rect.y, fw, track_rect.h),
+                             border_radius=tr)
 
-        r = self.HANDLE_R
         glow = pygame.Surface((r * 4, r * 4), pygame.SRCALPHA)
-        pygame.draw.circle(glow, (*self.color, 60), (r * 2, r * 2), r * 2)
+        pygame.draw.circle(glow, (*self.color, theme.SLIDER_GLOW_A), (r * 2, r * 2), r * 2)
         surface.blit(glow, (hx - r * 2, self.track.centery - r * 2))
-        pygame.draw.circle(surface, self.color,         (hx, self.track.centery), r)
-        pygame.draw.circle(surface, (255, 255, 255),    (hx, self.track.centery), r - 3)
-        pygame.draw.circle(surface, self.color,         (hx, self.track.centery), r - 6)
+        pygame.draw.circle(surface, self.color,      (hx, self.track.centery), r)
+        pygame.draw.circle(surface, (255, 255, 255), (hx, self.track.centery),
+                           r - theme.SLIDER_INNER_TRIM)
+        pygame.draw.circle(surface, self.color,      (hx, self.track.centery),
+                           r - theme.SLIDER_CORE_TRIM)

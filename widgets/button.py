@@ -1,6 +1,6 @@
 import pygame
+import theme
 from utils import lerp_color
-from constants import C_CARD_EDGE
 
 
 class Button:
@@ -10,27 +10,27 @@ class Button:
         self.text  = text
         self.color = color
         self.fonts = fonts
-        self._t    = 0.0   # hover lerp state
+        self._t    = 0.0
 
     def draw(self, surface, hovered):
-        self._t += ((1.0 if hovered else 0.0) - self._t) * 0.2
+        self._t += ((1.0 if hovered else 0.0) - self._t) * theme.BTN_HOVER_LERP
         col = lerp_color(self.color,
-                         tuple(min(255, c + 55) for c in self.color),
+                         tuple(min(255, c + theme.BTN_HOVER_BOOST) for c in self.color),
                          self._t)
 
-        # Drop shadow
         sh = pygame.Surface((self.rect.w + 4, self.rect.h + 6), pygame.SRCALPHA)
-        pygame.draw.rect(sh, (0, 0, 0, 65), sh.get_rect(), border_radius=12)
+        pygame.draw.rect(sh, (0, 0, 0, theme.BTN_SHADOW_A),
+                         sh.get_rect(), border_radius=theme.BTN_SHADOW_R)
         surface.blit(sh, (self.rect.x - 1, self.rect.y + 4))
 
-        pygame.draw.rect(surface, col, self.rect, border_radius=10)
+        pygame.draw.rect(surface, col, self.rect, border_radius=theme.BTN_RADIUS)
 
-        # Gloss highlight on top half
-        gl = pygame.Surface((self.rect.w - 4, self.rect.h // 2 - 2), pygame.SRCALPHA)
-        gl.fill((255, 255, 255, 22))
-        surface.blit(gl, (self.rect.x + 2, self.rect.y + 2))
+        gloss = pygame.Surface((self.rect.w - 4, self.rect.h // 2 - 2), pygame.SRCALPHA)
+        gloss.fill((255, 255, 255, theme.BTN_GLOSS_A))
+        surface.blit(gloss, (self.rect.x + 2, self.rect.y + 2))
 
-        pygame.draw.rect(surface, C_CARD_EDGE, self.rect, 1, border_radius=10)
+        pygame.draw.rect(surface, theme.CARD_EDGE, self.rect,
+                         theme.BTN_BORDER_W, border_radius=theme.BTN_RADIUS)
 
         lbl = self.fonts["btn"].render(f"{self.icon}  {self.text}", True, (255, 255, 255))
         surface.blit(lbl, lbl.get_rect(center=self.rect.center))

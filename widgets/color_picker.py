@@ -1,6 +1,6 @@
 import colorsys
 import pygame
-from constants import PRESET_COLORS, C_CARD_EDGE, C_TEXT, C_TEXT_DIM
+import theme
 
 
 class ColorPicker:
@@ -18,7 +18,7 @@ class ColorPicker:
     def _build(self):
         self.rects = [
             pygame.Rect(self.x + i * (self.SW + self.GAP), self.y, self.SW, self.SW)
-            for i in range(len(PRESET_COLORS))
+            for i in range(len(theme.PRESET_COLORS))
         ]
         rb_y = self.y + self.SW + 10
         self.rb_rect = pygame.Rect(self.x, rb_y, 16, 16)
@@ -41,26 +41,27 @@ class ColorPicker:
             h = (idx / max(total, 1)) % 1.0
             r, g, b = colorsys.hsv_to_rgb(h, 1.0, 1.0)
             return (int(r * 255), int(g * 255), int(b * 255))
-        return PRESET_COLORS[self.selected]
+        return theme.PRESET_COLORS[self.selected]
 
     def current_solid(self):
-        return PRESET_COLORS[self.selected]
+        return theme.PRESET_COLORS[self.selected]
 
     def draw(self, surface):
         f = self.fonts
-        surface.blit(f["section"].render("🎨  Color", True, C_TEXT_DIM),
+        surface.blit(f["section"].render("🎨  Color", True, theme.TEXT_DIM),
                      (self.x, self.y - 18))
 
-        for i, (r, col) in enumerate(zip(self.rects, PRESET_COLORS)):
+        for i, (r, col) in enumerate(zip(self.rects, theme.PRESET_COLORS)):
             if i == self.selected and not self.rainbow:
-                pygame.draw.rect(surface, col, r.inflate(6, 6), border_radius=8)
-            pygame.draw.rect(surface, col, r, border_radius=6)
+                sel = r.inflate(theme.SWATCH_SEL_EXPAND, theme.SWATCH_SEL_EXPAND)
+                pygame.draw.rect(surface, col, sel, border_radius=theme.SWATCH_SEL_RADIUS)
+            pygame.draw.rect(surface, col, r, border_radius=theme.SWATCH_RADIUS)
 
-        rb_col = (252, 211, 40) if self.rainbow else C_CARD_EDGE
-        pygame.draw.rect(surface, rb_col,    self.rb_rect, border_radius=3)
-        pygame.draw.rect(surface, C_TEXT_DIM, self.rb_rect, 1, border_radius=3)
+        rb_col = theme.RAINBOW_ACTIVE_COLOR if self.rainbow else theme.CARD_EDGE
+        pygame.draw.rect(surface, rb_col,       self.rb_rect, border_radius=3)
+        pygame.draw.rect(surface, theme.TEXT_DIM, self.rb_rect, 1, border_radius=3)
         if self.rainbow:
-            ck = f["small"].render("✓", True, (20, 20, 20))
+            ck = f["small"].render("✓", True, theme.RAINBOW_CHECK_COLOR)
             surface.blit(ck, ck.get_rect(center=self.rb_rect.center))
-        rb_label_col = (252, 211, 40) if self.rainbow else C_TEXT_DIM
+        rb_label_col = theme.RAINBOW_ACTIVE_COLOR if self.rainbow else theme.TEXT_DIM
         surface.blit(f["label"].render("🌈  Rainbow!", True, rb_label_col), self.rb_pos)

@@ -1,8 +1,6 @@
 import pygame
-from constants import (
-    PANEL_W, PREVIEW_SIZE,
-    SLIDER_COLORS, C_DRAW, C_UNDO, C_CLEAR, C_SAVE,
-)
+import theme
+from constants import PANEL_W, PREVIEW_SIZE
 from preview import PreviewWidget
 from widgets import Slider, Button, ColorPicker
 
@@ -23,11 +21,11 @@ def build_ui(fonts):
     sliders_card_y = preview_card_y + preview_card_h + 6
     y = sliders_card_y + 24
     slider_defs = [
-        ("⭕", "Big Circle",   50, 300, 150, SLIDER_COLORS[0]),
-        ("🔵", "Little Wheel",  5, 200,  80, SLIDER_COLORS[1]),
-        ("✏️", "Pen Reach",     5, 250, 100, SLIDER_COLORS[2]),
-        ("⚡", "Speed",         1,  20,   5, SLIDER_COLORS[3]),
-        ("📏", "Line Width",    1,   8,   1, SLIDER_COLORS[4]),
+        ("⭕", "Big Circle",   50, 300, 150, theme.SLIDER_COLORS[0]),
+        ("🔵", "Little Wheel",  5, 200,  80, theme.SLIDER_COLORS[1]),
+        ("✏️", "Pen Reach",     5, 250, 100, theme.SLIDER_COLORS[2]),
+        ("⚡", "Speed",         1,  20,   5, theme.SLIDER_COLORS[3]),
+        ("📏", "Line Width",    1,   8,   1, theme.SLIDER_COLORS[4]),
     ]
     sliders = []
     for em, lb, mn, mx, init, col in slider_defs:
@@ -46,10 +44,10 @@ def build_ui(fonts):
     bw  = PANEL_W - 6 - px * 2 + 4
     bh  = 33
     bh2 = (bw - 6) // 2
-    btn_draw  = Button(px,          by, bw,  bh, "▶", "Draw",    C_DRAW,  fonts); by += bh + 6
-    btn_undo  = Button(px,          by, bh2, bh, "↩", "Undo",   C_UNDO,  fonts)
-    btn_clear = Button(px + bh2 + 6, by, bh2, bh, "✕", "Clear",  C_CLEAR, fonts); by += bh + 6
-    btn_save  = Button(px,          by, bw,  bh, "💾", "Save PNG", C_SAVE, fonts); by += bh + 8
+    btn_draw  = Button(px,           by, bw,  bh, "▶", "Draw",     theme.DRAW,  fonts); by += bh + 6
+    btn_undo  = Button(px,           by, bh2, bh, "↩", "Undo",    theme.UNDO,  fonts)
+    btn_clear = Button(px + bh2 + 6, by, bh2, bh, "✕", "Clear",   theme.CLEAR, fonts); by += bh + 6
+    btn_save  = Button(px,           by, bw,  bh, "💾", "Save PNG", theme.SAVE, fonts); by += bh + 8
 
     cards = {
         "preview": pygame.Rect(6, preview_card_y, PANEL_W - 6, preview_card_h),
