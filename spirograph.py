@@ -118,88 +118,73 @@ class PreviewWidget:
         return self._ghost_pts
 
     def draw(self, surface, R, r, d, pen_color, fonts):
-        x, y, sz = self.x, self.y, self.size
-        cx = x + sz // 2
-        cy = y + sz // 2
+        sz = self.size
+        # Everything is drawn into a local sz×sz surface so all
+        # coordinates are in the range [0, sz] with center = (sz//2, sz//2).
+        local = pygame.Surface((sz, sz), pygame.SRCALPHA)
+        cx = cy = sz // 2
 
         max_r = R + 4
-        scale = (sz // 2 - 8) / max_r
+        scale = (sz // 2 - 10) / max_r
 
-        # ── Ghost trace ──
+        # ── Ghost trace (already in local coords) ──
         ghost = self._get_ghost(R, r, d)
         if len(ghost) > 1:
-            ghost_col = (*pen_color[:3], 45)
-            ghost_surf = pygame.Surface((sz, sz), pygame.SRCALPHA)
-            ox, oy = x, y
-            pts_local = [(int(px - ox), int(py - oy)) for px, py in ghost]
-            if len(pts_local) > 1:
-                pygame.draw.lines(ghost_surf, ghost_col, False, pts_local, 1)
-            surface.blit(ghost_surf, (ox, oy))
+            pts = [(int(px), int(py)) for px, py in ghost]
+            pygame.draw.lines(local, (*pen_color[:3], 50), False, pts, 1)
 
         # ── Outer ring ──
         R_px = int(R * scale)
-        pygame.draw.circle(surface, (65, 60, 110), (cx, cy), R_px, 2)
-        # Tick marks around outer ring
+        pygame.draw.circle(local, (65, 60, 110), (cx, cy), R_px, 2)
         for i in range(12):
             a = i * math.pi / 6
-            inner_r = R_px - 5
-            outer_r = R_px
-            pygame.draw.line(surface,
-                             (85, 80, 135),
-                             (cx + int(inner_r * math.cos(a)), cy + int(inner_r * math.sin(a))),
-                             (cx + int(outer_r * math.cos(a)), cy + int(outer_r * math.sin(a))), 1)
+            pygame.draw.line(local, (85, 80, 135),
+                             (cx + int((R_px - 5) * math.cos(a)),
+                              cy + int((R_px - 5) * math.sin(a))),
+                             (cx + int(R_px * math.cos(a)),
+                              cy + int(R_px * math.sin(a))), 1)
 
         # ── Inner wheel ──
         r_clamped = min(r, R - 1)
-        wheel_cx = cx + int((R - r_clamped) * scale * math.cos(self._angle))
-        wheel_cy = cy + int((R - r_clamped) * scale * math.sin(self._angle))
+        wx = cx + int((R - r_clamped) * scale * math.cos(self._angle))
+        wy = cy + int((R - r_clamped) * scale * math.sin(self._angle))
         r_px = max(2, int(r_clamped * scale))
 
-        # Wheel fill
-        wheel_surf = pygame.Surface((r_px * 2 + 2, r_px * 2 + 2), pygame.SRCALPHA)
-        pygame.draw.circle(wheel_surf, (40, 38, 70, 180),
-                           (r_px + 1, r_px + 1), r_px)
-        surface.blit(wheel_surf, (wheel_cx - r_px - 1, wheel_cy - r_px - 1))
+        wheel_fill = pygame.Surface((r_px * 2 + 2, r_px * 2 + 2), pygame.SRCALPHA)
+        pygame.draw.circle(wheel_fill, (40, 38, 70, 180), (r_px + 1, r_px + 1), r_px)
+        local.blit(wheel_fill, (wx - r_px - 1, wy - r_px - 1))
 
-        # Wheel ring + gear dots
-        pygame.draw.circle(surface, SLIDER_COLORS[1], (wheel_cx, wheel_cy), r_px, 2)
+        pygame.draw.circle(local, SLIDER_COLORS[1], (wx, wy), r_px, 2)
+        inner_rot = -(R - r_clamped) / max(r_clamped, 0.001) * self._angle
         gear_count = max(4, int(r_clamped / 12))
-        inner_rot  = -(R - r_clamped) / max(r_clamped, 0.001) * self._angle
         for i in range(gear_count):
             ga = inner_rot + i * (2 * math.pi / gear_count)
-            gdx = int((r_px - 3) * math.cos(ga))
-            gdy = int((r_px - 3) * math.sin(ga))
-            pygame.draw.circle(surface, SLIDER_COLORS[1],
-                               (wheel_cx + gdx, wheel_cy + gdy), 2)
+            pygame.draw.circle(local, SLIDER_COLORS[1],
+                               (wx + int((r_px - 3) * math.cos(ga)),
+                                wy + int((r_px - 3) * math.sin(ga))), 2)
 
-        # Cross-hair inside wheel
-        pygame.draw.line(surface, (70, 65, 110),
-                         (wheel_cx - r_px + 4, wheel_cy),
-                         (wheel_cx + r_px - 4, wheel_cy), 1)
-        pygame.draw.line(surface, (70, 65, 110),
-                         (wheel_cx, wheel_cy - r_px + 4),
-                         (wheel_cx, wheel_cy + r_px - 4), 1)
+        pygame.draw.line(local, (70, 65, 110),
+                         (wx - r_px + 4, wy), (wx + r_px - 4, wy), 1)
+        pygame.draw.line(local, (70, 65, 110),
+                         (wx, wy - r_px + 4), (wx, wy + r_px - 4), 1)
 
-        # ── Pen arm (line from wheel center to pen) ──
-        d_clamped = d
-        pen_x = wheel_cx + int(d_clamped * scale * math.cos(inner_rot))
-        pen_y = wheel_cy + int(d_clamped * scale * math.sin(inner_rot))
-        pygame.draw.line(surface, (*SLIDER_COLORS[2], 180),
-                         (wheel_cx, wheel_cy), (pen_x, pen_y), 2)
-
-        # ── Pen dot ──
-        pygame.draw.circle(surface, pen_color, (pen_x, pen_y), 5)
-        pygame.draw.circle(surface, (255, 255, 255), (pen_x, pen_y), 3)
-        pygame.draw.circle(surface, pen_color, (pen_x, pen_y), 2)
+        # ── Pen arm + dot ──
+        px2 = wx + int(d * scale * math.cos(inner_rot))
+        py2 = wy + int(d * scale * math.sin(inner_rot))
+        pygame.draw.line(local, (*SLIDER_COLORS[2], 200), (wx, wy), (px2, py2), 2)
+        pygame.draw.circle(local, pen_color,       (px2, py2), 5)
+        pygame.draw.circle(local, (255, 255, 255), (px2, py2), 3)
+        pygame.draw.circle(local, pen_color,       (px2, py2), 2)
 
         # ── Labels ──
         f = fonts["small"]
-        # R label
         lbl_R = f.render(f"R={R}", True, lerp_color(SLIDER_COLORS[0], (200, 200, 255), 0.4))
-        surface.blit(lbl_R, (cx - lbl_R.get_width() // 2, y + sz - 16))
-        # r label near wheel
+        local.blit(lbl_R, (cx - lbl_R.get_width() // 2, sz - 16))
         lbl_r = f.render(f"r={r}", True, SLIDER_COLORS[1])
-        surface.blit(lbl_r, (wheel_cx + r_px + 3, wheel_cy - 7))
+        local.blit(lbl_r, (min(wx + r_px + 3, sz - lbl_r.get_width() - 2), wy - 7))
+
+        # Blit the finished local surface onto the panel
+        surface.blit(local, (self.x, self.y))
 
 
 # ── Slider ───────────────────────────────────────────────────────────────────────
