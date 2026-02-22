@@ -46,8 +46,7 @@ class DrawingEngine:
     # ── Drawing ────────────────────────────────────────────────────────────────
     def start(self, R, r, d):
         pts     = self._spiro.compute_points(R, r, d)
-        max_ext = max(max(abs(x) for x, _ in pts),
-                      max(abs(y) for _, y in pts), 1)
+        max_ext = max(max(abs(v) for pt in pts for v in pt), 1)
         scale   = (CANVAS_SIZE / 2 - 28) / max_ext
         cx = cy = CANVAS_SIZE // 2
         self.draw_points = [(cx + x * scale, cy + y * scale) for x, y in pts]

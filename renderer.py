@@ -1,4 +1,3 @@
-import math
 import pygame
 import theme
 from utils import draw_card, lerp_color
@@ -23,7 +22,7 @@ def draw_panel(screen, app, mouse, tick):
     panel.blit(app.fonts["section"].render("👁  Preview", True, theme.TEXT_DIM),
                (app.cards["preview"].x + 10, app.cards["preview"].y + 8))
     app.preview.update(app.engine.drawing)
-    app.preview.draw(panel, app._R(), app._r(), app._d(),
+    app.preview.draw(panel, app.R(), app.r(), app.d(),
                      app.color_picker.current_solid(), app.fonts)
 
     # Sliders card

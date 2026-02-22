@@ -30,8 +30,7 @@ class PreviewWidget:
             return self._ghost_pts
         self._ghost_params = params
         raw     = self._spiro.compute_points(R, r, d, steps=theme.PREVIEW_GHOST_STEPS)
-        max_ext = max(max(abs(px) for px, _ in raw),
-                      max(abs(py) for _, py in raw), 1)
+        max_ext = max(max(abs(v) for pt in raw for v in pt), 1)
         scale   = (self.size * 0.5 - theme.PREVIEW_MARGIN) / max_ext
         half    = self.size // 2
         self._ghost_pts = [(half + px * scale, half + py * scale) for px, py in raw]

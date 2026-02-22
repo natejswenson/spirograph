@@ -22,21 +22,18 @@ class App:
         self.preview      = ui["preview"]
         self.sliders      = ui["sliders"]
         self.color_picker = ui["color_picker"]
-        self.buttons      = ui["buttons"]
         self.cards        = ui["cards"]
-        self._btn_draw    = ui["btn_draw"]
-        self._btn_undo    = ui["btn_undo"]
-        self._btn_clear   = ui["btn_clear"]
-        self._btn_save    = ui["btn_save"]
+        self.buttons      = ui["buttons"]
+        self.btn_draw, self.btn_undo, self.btn_clear, self.btn_save = self.buttons
 
         self.save_flash = 0
-        self._tick      = 0
+        self.tick       = 0
         self.clock      = pygame.time.Clock()
 
     # ── Slider value accessors ─────────────────────────────────────────────────
-    def _R(self): return self.sliders[0].value
-    def _r(self): return min(self.sliders[1].value, self._R() - 1)
-    def _d(self): return self.sliders[2].value
+    def R(self): return self.sliders[0].value
+    def r(self): return min(self.sliders[1].value, self.R() - 1)
+    def d(self): return self.sliders[2].value
 
     # ── Event handling ─────────────────────────────────────────────────────────
     def _handle_events(self):
@@ -54,13 +51,13 @@ class App:
             if not handled:
                 self.color_picker.handle_event(event)
 
-            if self._btn_draw.is_clicked(event):
-                self.engine.start(self._R(), self._r(), self._d())
-            elif self._btn_undo.is_clicked(event):
+            if self.btn_draw.is_clicked(event):
+                self.engine.start(self.R(), self.r(), self.d())
+            elif self.btn_undo.is_clicked(event):
                 self.engine.pop_undo()
-            elif self._btn_clear.is_clicked(event):
+            elif self.btn_clear.is_clicked(event):
                 self.engine.clear()
-            elif self._btn_save.is_clicked(event):
+            elif self.btn_save.is_clicked(event):
                 self._save()
 
         return True
@@ -76,17 +73,19 @@ class App:
         running = True
         while running:
             self.clock.tick(60)
-            self._tick += 1
+            self.tick += 1
             mouse = pygame.mouse.get_pos()
 
             running = self._handle_events()
 
-            speed = self.sliders[3].value * 5
-            thick = self.sliders[4].value
-            self.engine.step(speed, thick, self.color_picker)
+            self.engine.step(
+                self.sliders[3].value * 5,
+                self.sliders[4].value,
+                self.color_picker,
+            )
 
             draw_canvas(self.screen, self)
-            draw_panel(self.screen, self, mouse, self._tick)
+            draw_panel(self.screen, self, mouse, self.tick)
             pygame.display.flip()
 
         pygame.quit()

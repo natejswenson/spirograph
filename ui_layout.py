@@ -47,7 +47,7 @@ def build_ui(fonts):
     btn_draw  = Button(px,           by, bw,  bh, "▶", "Draw",     theme.DRAW,  fonts); by += bh + 6
     btn_undo  = Button(px,           by, bh2, bh, "↩", "Undo",    theme.UNDO,  fonts)
     btn_clear = Button(px + bh2 + 6, by, bh2, bh, "✕", "Clear",   theme.CLEAR, fonts); by += bh + 6
-    btn_save  = Button(px,           by, bw,  bh, "💾", "Save PNG", theme.SAVE, fonts); by += bh + 8
+    btn_save  = Button(px,           by, bw,  bh, "💾", "Save PNG", theme.SAVE, fonts); by += bh + 6
 
     cards = {
         "preview": pygame.Rect(6, preview_card_y, PANEL_W - 6, preview_card_h),
@@ -62,8 +62,4 @@ def build_ui(fonts):
         "color_picker": color_picker,
         "buttons":      [btn_draw, btn_undo, btn_clear, btn_save],
         "cards":        cards,
-        "btn_draw":     btn_draw,
-        "btn_undo":     btn_undo,
-        "btn_clear":    btn_clear,
-        "btn_save":     btn_save,
     }
