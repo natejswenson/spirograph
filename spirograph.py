@@ -1,7 +1,11 @@
 import pygame
 import math
 import colorsys
+import os
 from datetime import datetime
+
+SAVE_DIR = os.path.expanduser("~/Desktop/spirograph")
+os.makedirs(SAVE_DIR, exist_ok=True)
 
 # ── Constants ──────────────────────────────────────────────────────────────────
 WINDOW_W, WINDOW_H = 900, 650
@@ -411,7 +415,7 @@ class App:
                     self.canvas.fill(CANVAS_BG)
                 elif self.btn_save.is_clicked(event):
                     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-                    fname = f"spirograph_{ts}.png"
+                    fname = os.path.join(SAVE_DIR, f"spirograph_{ts}.png")
                     pygame.image.save(self.canvas, fname)
                     pygame.display.set_caption(f"Spirograph — Saved: {fname}")
 
