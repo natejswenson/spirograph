@@ -15,7 +15,7 @@ CANVAS_SIZE = 680
 CANVAS_X  = PANEL_W + 25
 CANVAS_Y  = (WINDOW_H - CANVAS_SIZE) // 2
 
-PREVIEW_SIZE = 170   # px — mechanism preview widget
+PREVIEW_SIZE = 155   # px — mechanism preview widget
 
 # ── Palette ─────────────────────────────────────────────────────────────────────
 C_BG        = ( 15,  12,  28)
@@ -191,7 +191,7 @@ class PreviewWidget:
 class Slider:
     TRACK_H  = 7
     HANDLE_R = 11
-    ROW_H    = 48
+    ROW_H    = 44
 
     def __init__(self, x, y, w, mn, mx, init, emoji, label, color, fonts):
         self.track   = pygame.Rect(x, y + 30, w, self.TRACK_H)
@@ -429,15 +429,15 @@ class App:
 
         # ── Preview card ──
         preview_card_y = 48
-        preview_card_h = PREVIEW_SIZE + 28
+        preview_card_h = PREVIEW_SIZE + 22
         self._preview_card = pygame.Rect(6, preview_card_y, PANEL_W - 6, preview_card_h)
         pw_x = (PANEL_W - PREVIEW_SIZE) // 2
-        pw_y = preview_card_y + 14
+        pw_y = preview_card_y + 11
         self.preview = PreviewWidget(pw_x, pw_y, PREVIEW_SIZE)
 
         # ── Sliders card ──
-        sliders_card_y = preview_card_y + preview_card_h + 8
-        y = sliders_card_y + 28
+        sliders_card_y = preview_card_y + preview_card_h + 6
+        y = sliders_card_y + 24
         defs = [
             ("⭕", "Big Circle",   50, 300, 150, SLIDER_COLORS[0]),
             ("🔵", "Little Wheel",  5, 200,  80, SLIDER_COLORS[1]),
@@ -449,20 +449,20 @@ class App:
         for em, lb, mn, mx, init, col in defs:
             self.sliders.append(Slider(px, y, sw, mn, mx, init, em, lb, col, f))
             y += Slider.ROW_H
-        sliders_card_h = y - sliders_card_y + 10
+        sliders_card_h = y - sliders_card_y + 8
         self._sliders_card = pygame.Rect(6, sliders_card_y, PANEL_W - 6, sliders_card_h)
 
         # ── Color card ──
-        color_card_y = sliders_card_y + sliders_card_h + 8
-        self.color_picker = ColorPicker(px, color_card_y + 30, f)
-        color_card_h = ColorPicker.SW + 46
+        color_card_y = sliders_card_y + sliders_card_h + 6
+        self.color_picker = ColorPicker(px, color_card_y + 26, f)
+        color_card_h = ColorPicker.SW + 40
         self._color_card = pygame.Rect(6, color_card_y, PANEL_W - 6, color_card_h)
 
         # ── Buttons card ──
-        btn_card_y = color_card_y + color_card_h + 8
-        by = btn_card_y + 10
+        btn_card_y = color_card_y + color_card_h + 6
+        by = btn_card_y + 8
         bw  = PANEL_W - 6 - px * 2 + 4
-        bh  = 36
+        bh  = 33
         bhalf = (bw - 6) // 2
         self.btn_draw  = Button(px, by, bw,    bh, "▶", "Draw",  C_DRAW,  f); by += bh + 6
         self.btn_undo  = Button(px, by, bhalf, bh, "↩", "Undo",  C_UNDO,  f)
