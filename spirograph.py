@@ -10,33 +10,34 @@ os.makedirs(SAVE_DIR, exist_ok=True)
 
 # ── Layout ──────────────────────────────────────────────────────────────────────
 WINDOW_W, WINDOW_H = 1060, 720
-PANEL_W  = 310
+PANEL_W   = 330
 CANVAS_SIZE = 680
-CANVAS_X = PANEL_W + 35
-CANVAS_Y = (WINDOW_H - CANVAS_SIZE) // 2
+CANVAS_X  = PANEL_W + 25
+CANVAS_Y  = (WINDOW_H - CANVAS_SIZE) // 2
+
+PREVIEW_SIZE = 170   # px — mechanism preview widget
 
 # ── Palette ─────────────────────────────────────────────────────────────────────
-C_BG          = ( 15,  12,  28)
-C_PANEL       = ( 24,  20,  44)
-C_CARD        = ( 32,  28,  58)
-C_CARD_EDGE   = ( 55,  50,  95)
-C_TEXT        = (235, 232, 255)
-C_TEXT_DIM    = (140, 130, 185)
-C_CANVAS_BG   = (  9,   8,  18)
+C_BG        = ( 15,  12,  28)
+C_PANEL     = ( 22,  19,  42)
+C_CARD      = ( 30,  26,  54)
+C_CARD_EDGE = ( 52,  48,  92)
+C_TEXT      = (235, 232, 255)
+C_TEXT_DIM  = (130, 122, 175)
+C_CANVAS_BG = (  8,   7,  17)
 
-# Button colors
-C_DRAW   = ( 99, 102, 241)   # indigo
-C_UNDO   = (217, 119,   6)   # amber
-C_CLEAR  = (220,  38,  38)   # red
-C_SAVE   = ( 22, 163,  74)   # green
+C_DRAW  = ( 99, 102, 241)
+C_UNDO  = (217, 119,   6)
+C_CLEAR = (220,  38,  38)
+C_SAVE  = ( 22, 163,  74)
 
-# Slider accent colors (one per slider, makes each distinct)
+# Per-slider accent colors
 SLIDER_COLORS = [
-    (129, 140, 248),   # Big Circle    — lavender
-    (251, 113, 133),   # Little Wheel  — pink
-    ( 52, 211, 153),   # Pen Reach     — mint
-    (251, 191,  36),   # Speed         — amber
-    (167, 139, 250),   # Thickness     — purple
+    (129, 140, 248),   # Big Circle
+    (251, 113, 133),   # Little Wheel
+    ( 52, 211, 153),   # Pen Reach
+    (251, 191,  36),   # Speed
+    (167, 139, 250),   # Line Width
 ]
 
 PRESET_COLORS = [
@@ -57,62 +58,164 @@ def gcd(a, b):
         a, b = b, a % b
     return a
 
-def lerp(a, b, t):
-    return a + (b - a) * t
-
 def lerp_color(c1, c2, t):
+    t = max(0.0, min(1.0, t))
     return tuple(int(c1[i] + (c2[i] - c1[i]) * t) for i in range(3))
 
 def clamp(v, lo, hi):
     return max(lo, min(hi, v))
 
-def rounded_rect_surface(w, h, color, radius, alpha=255):
-    s = pygame.Surface((w, h), pygame.SRCALPHA)
-    r, g, b = color
-    pygame.draw.rect(s, (r, g, b, alpha), s.get_rect(), border_radius=radius)
-    return s
-
 pygame.font.init()
 
 def load_fonts():
     return {
-        "title":   pygame.font.SysFont("Arial Rounded MT Bold", 15, bold=True),
-        "section": pygame.font.SysFont("Arial", 12, bold=True),
-        "label":   pygame.font.SysFont("Arial", 13, bold=True),
-        "value":   pygame.font.SysFont("Courier New", 14, bold=True),
-        "btn":     pygame.font.SysFont("Arial", 14, bold=True),
+        "title":   pygame.font.SysFont("Arial", 15, bold=True),
+        "section": pygame.font.SysFont("Arial", 11, bold=True),
+        "label":   pygame.font.SysFont("Arial", 12, bold=True),
+        "value":   pygame.font.SysFont("Courier New", 13, bold=True),
+        "btn":     pygame.font.SysFont("Arial", 13, bold=True),
         "small":   pygame.font.SysFont("Arial", 11),
     }
 
-
-# ── Card helper ──────────────────────────────────────────────────────────────────
-def draw_card(surface, rect, color=C_CARD, edge=C_CARD_EDGE, radius=12):
-    # Shadow
-    sh = pygame.Surface((rect.w + 4, rect.h + 4), pygame.SRCALPHA)
-    pygame.draw.rect(sh, (0, 0, 0, 60), sh.get_rect(), border_radius=radius + 2)
+def draw_card(surface, rect, color=C_CARD, edge=C_CARD_EDGE, radius=10):
+    sh = pygame.Surface((rect.w + 4, rect.h + 5), pygame.SRCALPHA)
+    pygame.draw.rect(sh, (0, 0, 0, 55), sh.get_rect(), border_radius=radius + 2)
     surface.blit(sh, (rect.x - 1, rect.y + 3))
-    # Body
     pygame.draw.rect(surface, color, rect, border_radius=radius)
-    # Border
     pygame.draw.rect(surface, edge, rect, 1, border_radius=radius)
+
+
+# ── Mechanism Preview Widget ─────────────────────────────────────────────────────
+class PreviewWidget:
+    """Animated physical toy preview: outer ring, rolling inner wheel, pen dot,
+    ghost trace of the full curve."""
+
+    def __init__(self, x, y, size):
+        self.x = x
+        self.y = y
+        self.size = size
+        self._angle = 0.0          # rolling angle of inner wheel
+        self._ghost_pts  = []      # precomputed ghost curve points (scaled)
+        self._ghost_params = None  # (R, r, d) cache key
+        self._spiro = _Spiro()
+
+    def update(self, drawing):
+        # Rotate faster while drawing, slow idle spin otherwise
+        self._angle += 0.018 if not drawing else 0.055
+
+    def _get_ghost(self, R, r, d):
+        params = (R, r, d)
+        if params == self._ghost_params:
+            return self._ghost_pts
+        self._ghost_params = params
+        raw = self._spiro.compute_points(R, r, d, steps=900)
+        max_ext = max(max(abs(px) for px, _ in raw),
+                      max(abs(py) for _, py in raw), 1)
+        pad   = self.size * 0.5 - 10
+        scale = pad / max_ext
+        cx = cy = self.size // 2
+        self._ghost_pts = [(cx + px * scale, cy + py * scale) for px, py in raw]
+        return self._ghost_pts
+
+    def draw(self, surface, R, r, d, pen_color, fonts):
+        x, y, sz = self.x, self.y, self.size
+        cx = x + sz // 2
+        cy = y + sz // 2
+
+        max_r = R + 4
+        scale = (sz // 2 - 8) / max_r
+
+        # ── Ghost trace ──
+        ghost = self._get_ghost(R, r, d)
+        if len(ghost) > 1:
+            ghost_col = (*pen_color[:3], 45)
+            ghost_surf = pygame.Surface((sz, sz), pygame.SRCALPHA)
+            ox, oy = x, y
+            pts_local = [(int(px - ox), int(py - oy)) for px, py in ghost]
+            if len(pts_local) > 1:
+                pygame.draw.lines(ghost_surf, ghost_col, False, pts_local, 1)
+            surface.blit(ghost_surf, (ox, oy))
+
+        # ── Outer ring ──
+        R_px = int(R * scale)
+        pygame.draw.circle(surface, (65, 60, 110), (cx, cy), R_px, 2)
+        # Tick marks around outer ring
+        for i in range(12):
+            a = i * math.pi / 6
+            inner_r = R_px - 5
+            outer_r = R_px
+            pygame.draw.line(surface,
+                             (85, 80, 135),
+                             (cx + int(inner_r * math.cos(a)), cy + int(inner_r * math.sin(a))),
+                             (cx + int(outer_r * math.cos(a)), cy + int(outer_r * math.sin(a))), 1)
+
+        # ── Inner wheel ──
+        r_clamped = min(r, R - 1)
+        wheel_cx = cx + int((R - r_clamped) * scale * math.cos(self._angle))
+        wheel_cy = cy + int((R - r_clamped) * scale * math.sin(self._angle))
+        r_px = max(2, int(r_clamped * scale))
+
+        # Wheel fill
+        wheel_surf = pygame.Surface((r_px * 2 + 2, r_px * 2 + 2), pygame.SRCALPHA)
+        pygame.draw.circle(wheel_surf, (40, 38, 70, 180),
+                           (r_px + 1, r_px + 1), r_px)
+        surface.blit(wheel_surf, (wheel_cx - r_px - 1, wheel_cy - r_px - 1))
+
+        # Wheel ring + gear dots
+        pygame.draw.circle(surface, SLIDER_COLORS[1], (wheel_cx, wheel_cy), r_px, 2)
+        gear_count = max(4, int(r_clamped / 12))
+        inner_rot  = -(R - r_clamped) / max(r_clamped, 0.001) * self._angle
+        for i in range(gear_count):
+            ga = inner_rot + i * (2 * math.pi / gear_count)
+            gdx = int((r_px - 3) * math.cos(ga))
+            gdy = int((r_px - 3) * math.sin(ga))
+            pygame.draw.circle(surface, SLIDER_COLORS[1],
+                               (wheel_cx + gdx, wheel_cy + gdy), 2)
+
+        # Cross-hair inside wheel
+        pygame.draw.line(surface, (70, 65, 110),
+                         (wheel_cx - r_px + 4, wheel_cy),
+                         (wheel_cx + r_px - 4, wheel_cy), 1)
+        pygame.draw.line(surface, (70, 65, 110),
+                         (wheel_cx, wheel_cy - r_px + 4),
+                         (wheel_cx, wheel_cy + r_px - 4), 1)
+
+        # ── Pen arm (line from wheel center to pen) ──
+        d_clamped = d
+        pen_x = wheel_cx + int(d_clamped * scale * math.cos(inner_rot))
+        pen_y = wheel_cy + int(d_clamped * scale * math.sin(inner_rot))
+        pygame.draw.line(surface, (*SLIDER_COLORS[2], 180),
+                         (wheel_cx, wheel_cy), (pen_x, pen_y), 2)
+
+        # ── Pen dot ──
+        pygame.draw.circle(surface, pen_color, (pen_x, pen_y), 5)
+        pygame.draw.circle(surface, (255, 255, 255), (pen_x, pen_y), 3)
+        pygame.draw.circle(surface, pen_color, (pen_x, pen_y), 2)
+
+        # ── Labels ──
+        f = fonts["small"]
+        # R label
+        lbl_R = f.render(f"R={R}", True, lerp_color(SLIDER_COLORS[0], (200, 200, 255), 0.4))
+        surface.blit(lbl_R, (cx - lbl_R.get_width() // 2, y + sz - 16))
+        # r label near wheel
+        lbl_r = f.render(f"r={r}", True, SLIDER_COLORS[1])
+        surface.blit(lbl_r, (wheel_cx + r_px + 3, wheel_cy - 7))
 
 
 # ── Slider ───────────────────────────────────────────────────────────────────────
 class Slider:
-    TRACK_H  = 8
-    HANDLE_R = 12
-    ROW_H    = 62
+    TRACK_H  = 7
+    HANDLE_R = 11
+    ROW_H    = 48
 
-    def __init__(self, x, y, w, min_val, max_val, initial,
-                 emoji, label, color, fonts):
-        self.x, self.y, self.w = x, y, w
-        self.track = pygame.Rect(x, y + 42, w, self.TRACK_H)
-        self.min_val = min_val
-        self.max_val = max_val
-        self._value  = float(initial)
+    def __init__(self, x, y, w, mn, mx, init, emoji, label, color, fonts):
+        self.track   = pygame.Rect(x, y + 30, w, self.TRACK_H)
+        self.min_val = mn
+        self.max_val = mx
+        self._value  = float(init)
         self.emoji   = emoji
         self.label   = label
-        self.color   = color      # accent color for this slider
+        self.color   = color
         self.fonts   = fonts
         self.dragging = False
 
@@ -120,65 +223,60 @@ class Slider:
     def value(self):
         return int(round(self._value))
 
-    def _val_to_x(self, val):
+    def _vx(self, val):
         r = (val - self.min_val) / (self.max_val - self.min_val)
         return self.track.x + int(r * self.track.w)
 
-    def _x_to_val(self, x):
-        r = clamp((x - self.track.x) / self.track.w, 0.0, 1.0)
-        return self.min_val + r * (self.max_val - self.min_val)
+    def _xv(self, x):
+        return self.min_val + clamp((x - self.track.x) / self.track.w, 0, 1) * (self.max_val - self.min_val)
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            hx = self._val_to_x(self._value)
-            hy = self.track.centery
-            if (math.hypot(event.pos[0] - hx, event.pos[1] - hy) <= self.HANDLE_R + 6
-                    or self.track.inflate(0, 28).collidepoint(event.pos)):
+            hx = self._vx(self._value)
+            if (math.hypot(event.pos[0] - hx, event.pos[1] - self.track.centery) <= self.HANDLE_R + 6
+                    or self.track.inflate(0, 26).collidepoint(event.pos)):
                 self.dragging = True
-                self._value = self._x_to_val(event.pos[0])
+                self._value = self._xv(event.pos[0])
                 return True
         elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
             if self.dragging:
                 self.dragging = False
                 return True
         elif event.type == pygame.MOUSEMOTION and self.dragging:
-            self._value = self._x_to_val(event.pos[0])
+            self._value = self._xv(event.pos[0])
             return True
         return False
 
     def draw(self, surface):
-        f = self.fonts
-        # Emoji + label on left, big value on right
-        em_lbl = f["label"].render(f"{self.emoji}  {self.label}", True, C_TEXT)
-        surface.blit(em_lbl, (self.x, self.y + 18))
+        f  = self.fonts
+        hx = self._vx(self._value)
 
-        val_str = str(self.value)
-        val_surf = f["value"].render(val_str, True, self.color)
-        surface.blit(val_surf, (self.track.right - val_surf.get_width(), self.y + 16))
+        em  = f["label"].render(f"{self.emoji}  {self.label}", True, C_TEXT)
+        val = f["value"].render(str(self.value), True, self.color)
+        surface.blit(em,  (self.track.x, self.track.y - 18))
+        surface.blit(val, (self.track.right - val.get_width(), self.track.y - 19))
 
         # Track bg
         tr = pygame.Rect(self.track.x, self.track.centery - self.TRACK_H // 2,
                          self.track.w, self.TRACK_H)
         pygame.draw.rect(surface, C_CARD_EDGE, tr, border_radius=4)
 
-        # Filled portion with color
-        hx = self._val_to_x(self._value)
+        # Fill
         fw = hx - self.track.x
         if fw > 0:
-            fr = pygame.Rect(self.track.x, self.track.centery - self.TRACK_H // 2,
-                             fw, self.TRACK_H)
-            pygame.draw.rect(surface, self.color, fr, border_radius=4)
+            pygame.draw.rect(surface, self.color,
+                             pygame.Rect(tr.x, tr.y, fw, tr.h), border_radius=4)
 
-        # Handle: shadow + filled circle + white inner dot
+        # Glow behind handle
         r = self.HANDLE_R
-        # Soft glow behind handle
         glow = pygame.Surface((r * 4, r * 4), pygame.SRCALPHA)
-        pygame.draw.circle(glow, (*self.color, 55), (r * 2, r * 2), r * 2)
+        pygame.draw.circle(glow, (*self.color, 60), (r * 2, r * 2), r * 2)
         surface.blit(glow, (hx - r * 2, self.track.centery - r * 2))
 
-        pygame.draw.circle(surface, self.color,   (hx, self.track.centery), r)
-        pygame.draw.circle(surface, (255, 255, 255), (hx, self.track.centery), r - 4)
-        pygame.draw.circle(surface, self.color,   (hx, self.track.centery), r - 7)
+        # Handle
+        pygame.draw.circle(surface, self.color,         (hx, self.track.centery), r)
+        pygame.draw.circle(surface, (255, 255, 255),    (hx, self.track.centery), r - 3)
+        pygame.draw.circle(surface, self.color,         (hx, self.track.centery), r - 6)
 
 
 # ── Button ───────────────────────────────────────────────────────────────────────
@@ -193,29 +291,22 @@ class Button:
 
     def draw(self, surface, hovered):
         self._t += ((1.0 if hovered else 0.0) - self._t) * 0.2
-        col = lerp_color(self.color,
-                         tuple(min(255, c + 50) for c in self.color),
-                         self._t)
+        col = lerp_color(self.color, tuple(min(255, c + 55) for c in self.color), self._t)
 
-        # Shadow
         sh = pygame.Surface((self.rect.w + 4, self.rect.h + 6), pygame.SRCALPHA)
-        pygame.draw.rect(sh, (0, 0, 0, 70), sh.get_rect(), border_radius=12)
+        pygame.draw.rect(sh, (0, 0, 0, 65), sh.get_rect(), border_radius=12)
         surface.blit(sh, (self.rect.x - 1, self.rect.y + 4))
 
-        # Body
         pygame.draw.rect(surface, col, self.rect, border_radius=10)
 
-        # Glossy top band
-        gl = pygame.Surface((self.rect.w - 4, self.rect.h // 2 - 2), pygame.SRCALPHA)
-        gl.fill((255, 255, 255, 25))
-        surface.blit(gl, (self.rect.x + 2, self.rect.y + 2))
+        gloss = pygame.Surface((self.rect.w - 4, self.rect.h // 2 - 2), pygame.SRCALPHA)
+        gloss.fill((255, 255, 255, 22))
+        surface.blit(gloss, (self.rect.x + 2, self.rect.y + 2))
 
-        # Border
-        pygame.draw.rect(surface, (255, 255, 255, 40), self.rect, 1, border_radius=10)
+        pygame.draw.rect(surface, C_CARD_EDGE, self.rect, 1, border_radius=10)
 
-        # Icon + label
-        full = f"{self.icon}  {self.text}"
-        lbl = self.fonts["btn"].render(full, True, (255, 255, 255))
+        label = f"{self.icon}  {self.text}"
+        lbl = self.fonts["btn"].render(label, True, (255, 255, 255))
         surface.blit(lbl, lbl.get_rect(center=self.rect.center))
 
     def is_clicked(self, event):
@@ -226,8 +317,8 @@ class Button:
 
 # ── Color picker ─────────────────────────────────────────────────────────────────
 class ColorPicker:
-    SW = 32
-    GAP = 8
+    SW  = 26
+    GAP = 6
 
     def __init__(self, x, y, fonts):
         self.x = x
@@ -239,15 +330,13 @@ class ColorPicker:
 
     def _build(self):
         self.rects = []
+        # Single row of 8
         for i in range(len(PRESET_COLORS)):
-            col = i % 4
-            row = i // 4
-            rx = self.x + col * (self.SW + self.GAP)
-            ry = self.y + row * (self.SW + self.GAP)
-            self.rects.append(pygame.Rect(rx, ry, self.SW, self.SW))
-        rb_y = self.y + 2 * (self.SW + self.GAP) + 10
-        self.rb_rect  = pygame.Rect(self.x, rb_y, 18, 18)
-        self.rb_pos   = (self.x + 26, rb_y + 1)
+            rx = self.x + i * (self.SW + self.GAP)
+            self.rects.append(pygame.Rect(rx, self.y, self.SW, self.SW))
+        rb_y = self.y + self.SW + 10
+        self.rb_rect = pygame.Rect(self.x, rb_y, 16, 16)
+        self.rb_pos  = (self.x + 22, rb_y + 1)
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -268,34 +357,32 @@ class ColorPicker:
             return (int(r * 255), int(g * 255), int(b * 255))
         return PRESET_COLORS[self.selected]
 
+    def current_solid(self):
+        return PRESET_COLORS[self.selected]
+
     def draw(self, surface):
-        lbl = self.fonts["section"].render("🎨  Pick a Color", True, C_TEXT)
-        surface.blit(lbl, (self.x, self.y - 20))
+        lbl = self.fonts["section"].render("🎨  Color", True, C_TEXT_DIM)
+        surface.blit(lbl, (self.x, self.y - 18))
 
         for i, (r, col) in enumerate(zip(self.rects, PRESET_COLORS)):
-            # Outer ring for selected
             if i == self.selected and not self.rainbow:
                 ring = r.inflate(6, 6)
-                pygame.draw.rect(surface, col, ring, border_radius=9)
-            pygame.draw.rect(surface, col, r, border_radius=7)
-            if i != self.selected or self.rainbow:
-                # Subtle inner shadow ring
-                pygame.draw.rect(surface, (0, 0, 0, 60), r, 1, border_radius=7)
+                pygame.draw.rect(surface, col, ring, border_radius=8)
+            pygame.draw.rect(surface, col, r, border_radius=6)
 
-        # Rainbow toggle
         rb_col = (252, 211, 40) if self.rainbow else C_CARD_EDGE
-        pygame.draw.rect(surface, rb_col, self.rb_rect, border_radius=4)
-        pygame.draw.rect(surface, C_TEXT_DIM, self.rb_rect, 1, border_radius=4)
+        pygame.draw.rect(surface, rb_col, self.rb_rect, border_radius=3)
+        pygame.draw.rect(surface, C_TEXT_DIM, self.rb_rect, 1, border_radius=3)
         if self.rainbow:
             ck = self.fonts["small"].render("✓", True, (20, 20, 20))
             surface.blit(ck, ck.get_rect(center=self.rb_rect.center))
-        lbl2 = self.fonts["label"].render("🌈  Rainbow!", True,
-                                          (252, 211, 40) if self.rainbow else C_TEXT_DIM)
+        lbl2 = self.fonts["label"].render("🌈  Rainbow!",
+                                          True, (252, 211, 40) if self.rainbow else C_TEXT_DIM)
         surface.blit(lbl2, self.rb_pos)
 
 
 # ── Spirograph math ───────────────────────────────────────────────────────────────
-class Spirograph:
+class _Spiro:
     def get_period(self, R, r):
         ri = max(1, int(round(r)))
         Ri = max(1, int(round(R)))
@@ -313,15 +400,14 @@ class Spirograph:
         return pts
 
 
-# ── Static canvas background ──────────────────────────────────────────────────────
+# ── Canvas dot-grid background ────────────────────────────────────────────────────
 def make_canvas_bg(size):
     surf = pygame.Surface((size, size))
     surf.fill(C_CANVAS_BG)
-    # Subtle dot grid
     for gx in range(28, size, 28):
         for gy in range(28, size, 28):
-            c = 25 + int(8 * math.sin(gx * 0.1) * math.cos(gy * 0.1))
-            surf.set_at((gx, gy), (c, c, c + 8))
+            c = 20 + int(7 * math.sin(gx * 0.12) * math.cos(gy * 0.12))
+            surf.set_at((gx, gy), (c, c, c + 10))
     return surf
 
 
@@ -338,7 +424,7 @@ class App:
         self._canvas_bg = make_canvas_bg(CANVAS_SIZE)
         self.canvas     = self._canvas_bg.copy()
 
-        self.spiro       = Spirograph()
+        self.spiro       = _Spiro()
         self.drawing     = False
         self.draw_index  = 0
         self.draw_points = []
@@ -346,52 +432,58 @@ class App:
         self.layer_count = 0
         self._undo_stack = []
         self._tick       = 0
-        self._save_flash = 0   # countdown frames for save confirmation
+        self._save_flash = 0
 
         self.clock = pygame.time.Clock()
         self._build_ui()
 
     def _build_ui(self):
         f  = self.fonts
-        px = 18
-        # Card-based layout — each card has a top y
-        card_pad = 14
+        px = 16
+        sw = PANEL_W - px * 2 - 12
+
+        # ── Preview card ──
+        preview_card_y = 48
+        preview_card_h = PREVIEW_SIZE + 28
+        self._preview_card = pygame.Rect(6, preview_card_y, PANEL_W - 6, preview_card_h)
+        pw_x = (PANEL_W - PREVIEW_SIZE) // 2
+        pw_y = preview_card_y + 14
+        self.preview = PreviewWidget(pw_x, pw_y, PREVIEW_SIZE)
 
         # ── Sliders card ──
-        sliders_card_y = 56
-        y = sliders_card_y + card_pad + 14
-
-        sw = PANEL_W - px * 2 - 10
-        slider_defs = [
-            ("⭕", "Big Circle",    50, 300, 150, SLIDER_COLORS[0]),
-            ("🔵", "Little Wheel",   5, 200,  80, SLIDER_COLORS[1]),
-            ("✏️", "Pen Reach",      5, 250, 100, SLIDER_COLORS[2]),
-            ("⚡", "Speed",          1,  20,   5, SLIDER_COLORS[3]),
-            ("📏", "Line Width",     1,   8,   1, SLIDER_COLORS[4]),
+        sliders_card_y = preview_card_y + preview_card_h + 8
+        y = sliders_card_y + 28
+        defs = [
+            ("⭕", "Big Circle",   50, 300, 150, SLIDER_COLORS[0]),
+            ("🔵", "Little Wheel",  5, 200,  80, SLIDER_COLORS[1]),
+            ("✏️", "Pen Reach",     5, 250, 100, SLIDER_COLORS[2]),
+            ("⚡", "Speed",         1,  20,   5, SLIDER_COLORS[3]),
+            ("📏", "Line Width",    1,   8,   1, SLIDER_COLORS[4]),
         ]
         self.sliders = []
-        for em, lbl, mn, mx, init, col in slider_defs:
-            self.sliders.append(Slider(px, y, sw, mn, mx, init, em, lbl, col, f))
+        for em, lb, mn, mx, init, col in defs:
+            self.sliders.append(Slider(px, y, sw, mn, mx, init, em, lb, col, f))
             y += Slider.ROW_H
-
-        sliders_card_h = y - sliders_card_y + card_pad - 8
-        self._sliders_card = pygame.Rect(8, sliders_card_y, PANEL_W - 8, sliders_card_h)
+        sliders_card_h = y - sliders_card_y + 10
+        self._sliders_card = pygame.Rect(6, sliders_card_y, PANEL_W - 6, sliders_card_h)
 
         # ── Color card ──
-        color_card_y = sliders_card_y + sliders_card_h + 10
-        self.color_picker = ColorPicker(px, color_card_y + card_pad + 20, f)
-        color_card_h = 2 * (ColorPicker.SW + ColorPicker.GAP) + 50 + card_pad * 2
-        self._color_card = pygame.Rect(8, color_card_y, PANEL_W - 8, color_card_h)
+        color_card_y = sliders_card_y + sliders_card_h + 8
+        self.color_picker = ColorPicker(px, color_card_y + 30, f)
+        color_card_h = ColorPicker.SW + 46
+        self._color_card = pygame.Rect(6, color_card_y, PANEL_W - 6, color_card_h)
 
         # ── Buttons card ──
-        btn_card_y = color_card_y + color_card_h + 10
-        by = btn_card_y + card_pad
-        bw, bh = PANEL_W - 8 - px * 2 + 8 - 8, 38
-        self.btn_draw  = Button(px, by, bw, bh, "▶", "Draw",    C_DRAW,  f); by += bh + 6
-        self.btn_undo  = Button(px, by, bw, bh, "↩", "Undo",   C_UNDO,  f); by += bh + 6
-        self.btn_clear = Button(px, by, bw, bh, "✕", "Clear",  C_CLEAR, f); by += bh + 6
-        self.btn_save  = Button(px, by, bw, bh, "💾", "Save",  C_SAVE,  f); by += bh + card_pad
-        self._btn_card = pygame.Rect(8, btn_card_y, PANEL_W - 8, by - btn_card_y)
+        btn_card_y = color_card_y + color_card_h + 8
+        by = btn_card_y + 10
+        bw  = PANEL_W - 6 - px * 2 + 4
+        bh  = 36
+        bhalf = (bw - 6) // 2
+        self.btn_draw  = Button(px, by, bw,    bh, "▶", "Draw",  C_DRAW,  f); by += bh + 6
+        self.btn_undo  = Button(px, by, bhalf, bh, "↩", "Undo",  C_UNDO,  f)
+        self.btn_clear = Button(px + bhalf + 6, by, bhalf, bh, "✕", "Clear", C_CLEAR, f); by += bh + 6
+        self.btn_save  = Button(px, by, bw, bh, "💾", "Save PNG", C_SAVE, f); by += bh + 10
+        self._btn_card = pygame.Rect(6, btn_card_y, PANEL_W - 6, by - btn_card_y)
 
         self.buttons = [self.btn_draw, self.btn_undo, self.btn_clear, self.btn_save]
 
@@ -403,24 +495,21 @@ class App:
 
     def _pop_undo(self):
         if self._undo_stack:
-            self.drawing    = False
-            self.canvas     = self._undo_stack.pop()
+            self.drawing     = False
+            self.canvas      = self._undo_stack.pop()
             self.layer_count = max(0, self.layer_count - 1)
 
     # ── Drawing ───────────────────────────────────────────────────────────────────
-    def _clamp_r(self):
-        R, r = self.sliders[0].value, self.sliders[1].value
-        return min(r, R - 1) if r >= R else r
+    def _R(self): return self.sliders[0].value
+    def _r(self): return min(self.sliders[1].value, self._R() - 1)
+    def _d(self): return self.sliders[2].value
 
     def start_drawing(self):
-        R = self.sliders[0].value
-        r = self._clamp_r()
-        d = self.sliders[2].value
+        R, r, d = self._R(), self._r(), self._d()
         pts = self.spiro.compute_points(R, r, d)
-
         max_ext = max(max(abs(x) for x, _ in pts),
                       max(abs(y) for _, y in pts), 1)
-        scale   = (CANVAS_SIZE / 2 - 28) / max_ext
+        scale = (CANVAS_SIZE / 2 - 28) / max_ext
         cx = cy = CANVAS_SIZE // 2
         self.draw_points = [(cx + x * scale, cy + y * scale) for x, y in pts]
         self.draw_total  = len(self.draw_points)
@@ -436,7 +525,7 @@ class App:
         cp    = self.color_picker
         for _ in range(speed):
             if self.draw_index >= self.draw_total:
-                self.drawing = False
+                self.drawing     = False
                 self.layer_count += 1
                 break
             p1 = self.draw_points[self.draw_index - 1]
@@ -453,77 +542,79 @@ class App:
         panel = pygame.Surface((PANEL_W, WINDOW_H))
         panel.fill(C_PANEL)
 
-        # ── Title bar ──
-        title_bar = pygame.Rect(0, 0, PANEL_W, 50)
-        pygame.draw.rect(panel, C_CARD, title_bar)
-        pygame.draw.line(panel, C_CARD_EDGE, (0, 50), (PANEL_W, 50))
+        # Title bar
+        pygame.draw.rect(panel, C_CARD, pygame.Rect(0, 0, PANEL_W, 44))
+        pygame.draw.line(panel, C_CARD_EDGE, (0, 44), (PANEL_W, 44))
 
-        # Animated dot (pulsing when drawing)
         pulse = 0.5 + 0.5 * math.sin(self._tick * 0.07)
-        dot_col = lerp_color((80, 80, 120), C_DRAW, pulse) if self.drawing else (60, 58, 100)
-        pygame.draw.circle(panel, dot_col, (18, 25), 7)
-        pygame.draw.circle(panel, (255, 255, 255, 120), (18, 25), 4)
+        dot_c = lerp_color((70, 65, 110), C_DRAW, pulse) if self.drawing else (55, 50, 88)
+        pygame.draw.circle(panel, dot_c, (16, 22), 6)
 
         title = self.fonts["title"].render("SPIROGRAPH STUDIO", True, C_TEXT)
-        panel.blit(title, (32, 16))
+        panel.blit(title, (28, 14))
 
-        # ── Slider card ──
+        # Preview card
+        draw_card(panel, self._preview_card)
+        sec = self.fonts["section"].render("👁  Preview", True, C_TEXT_DIM)
+        panel.blit(sec, (self._preview_card.x + 10, self._preview_card.y + 8))
+        pen_col = self.color_picker.current_solid()
+        self.preview.update(self.drawing)
+        self.preview.draw(panel, self._R(), self._r(), self._d(), pen_col, self.fonts)
+
+        # Sliders card
         draw_card(panel, self._sliders_card)
-        sec = self.fonts["section"].render("🎛   Adjust the Shape", True, C_TEXT_DIM)
-        panel.blit(sec, (self._sliders_card.x + 12, self._sliders_card.y + 8))
+        sec2 = self.fonts["section"].render("🎛  Adjust the Shape", True, C_TEXT_DIM)
+        panel.blit(sec2, (self._sliders_card.x + 10, self._sliders_card.y + 8))
         for s in self.sliders:
             s.draw(panel)
 
-        # ── Color card ──
+        # Color card
         draw_card(panel, self._color_card)
         self.color_picker.draw(panel)
 
-        # ── Button card ──
+        # Button card
         draw_card(panel, self._btn_card)
         for btn in self.buttons:
             btn.draw(panel, btn.rect.collidepoint(mouse))
 
-        # ── Status strip ──
-        strip_y = WINDOW_H - 34
-        pygame.draw.line(panel, C_CARD_EDGE, (0, strip_y), (PANEL_W, strip_y))
+        # Status strip
+        sy = WINDOW_H - 30
+        pygame.draw.line(panel, C_CARD_EDGE, (0, sy), (PANEL_W, sy))
         if self.drawing:
             pct = self.draw_index / max(self.draw_total, 1)
-            bar = pygame.Rect(10, strip_y + 8, PANEL_W - 20, 6)
+            bar = pygame.Rect(8, sy + 8, PANEL_W - 16, 6)
             pygame.draw.rect(panel, C_CARD_EDGE, bar, border_radius=3)
-            if pct > 0:
+            fw  = int(bar.w * pct)
+            if fw > 0:
                 pygame.draw.rect(panel, C_DRAW,
-                                 pygame.Rect(bar.x, bar.y, int(bar.w * pct), bar.h),
-                                 border_radius=3)
-            txt = self.fonts["small"].render(f"Drawing…  {int(pct * 100)}%",
-                                             True, C_TEXT_DIM)
-            panel.blit(txt, (12, strip_y + 18))
+                                 pygame.Rect(bar.x, bar.y, fw, bar.h), border_radius=3)
+            t = self.fonts["small"].render(f"Drawing…  {int(pct * 100)}%", True, C_TEXT_DIM)
+            panel.blit(t, (10, sy + 16))
         elif self._save_flash > 0:
             self._save_flash -= 1
-            txt = self.fonts["small"].render("✓  Saved to Desktop/spirograph",
-                                             True, C_SAVE)
-            panel.blit(txt, (12, strip_y + 10))
+            t = self.fonts["small"].render("✓  Saved to Desktop/spirograph", True, C_SAVE)
+            panel.blit(t, (10, sy + 8))
         else:
-            undo = len(self._undo_stack)
-            txt  = self.fonts["small"].render(
-                f"Layers: {self.layer_count}    Undo steps: {undo}",
-                True, C_TEXT_DIM)
-            panel.blit(txt, (12, strip_y + 10))
+            t = self.fonts["small"].render(
+                f"Layers: {self.layer_count}   Undo: {len(self._undo_stack)}", True, C_TEXT_DIM)
+            panel.blit(t, (10, sy + 8))
 
-        # Right edge separator line
         pygame.draw.line(panel, C_CARD_EDGE, (PANEL_W - 1, 0), (PANEL_W - 1, WINDOW_H))
         self.screen.blit(panel, (0, 0))
 
     def _draw_canvas(self):
-        # Multi-layer glow aura
-        for r, alpha in [(18, 15), (10, 30), (4, 50)]:
-            aura = pygame.Surface((CANVAS_SIZE + r * 2, CANVAS_SIZE + r * 2), pygame.SRCALPHA)
-            col  = C_DRAW if self.drawing else (55, 50, 95)
-            pygame.draw.rect(aura, (*col, alpha), aura.get_rect(), border_radius=12 + r)
-            self.screen.blit(aura, (CANVAS_X - r, CANVAS_Y - r))
+        # Glow aura
+        for offset, alpha in ((16, 12), (9, 28), (3, 50)):
+            aura = pygame.Surface((CANVAS_SIZE + offset * 2, CANVAS_SIZE + offset * 2),
+                                  pygame.SRCALPHA)
+            col  = C_DRAW if self.drawing else (48, 44, 88)
+            pygame.draw.rect(aura, (*col, alpha), aura.get_rect(), border_radius=10 + offset)
+            self.screen.blit(aura, (CANVAS_X - offset, CANVAS_Y - offset))
 
-        border = pygame.Rect(CANVAS_X - 2, CANVAS_Y - 2,
-                             CANVAS_SIZE + 4, CANVAS_SIZE + 4)
-        pygame.draw.rect(self.screen, C_CARD_EDGE, border, 2, border_radius=8)
+        pygame.draw.rect(self.screen, C_CARD_EDGE,
+                         pygame.Rect(CANVAS_X - 2, CANVAS_Y - 2,
+                                     CANVAS_SIZE + 4, CANVAS_SIZE + 4),
+                         2, border_radius=6)
         self.screen.blit(self.canvas, (CANVAS_X, CANVAS_Y))
 
     # ── Main loop ─────────────────────────────────────────────────────────────────
@@ -563,10 +654,9 @@ class App:
                     ts    = datetime.now().strftime("%Y%m%d_%H%M%S")
                     fname = os.path.join(SAVE_DIR, f"spirograph_{ts}.png")
                     pygame.image.save(self.canvas, fname)
-                    self._save_flash = 120   # show for 2 seconds
+                    self._save_flash = 120
 
             self._animate_step()
-
             self.screen.fill(C_BG)
             self._draw_panel(mouse)
             self._draw_canvas()
