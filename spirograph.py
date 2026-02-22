@@ -270,6 +270,8 @@ class App:
         self.slider_d = Slider(px, y, sw, 5, 250, 100, "d  (pen offset)")
         y += 50
         self.slider_speed = Slider(px, y, sw, 1, 20, 5, "Speed")
+        y += 50
+        self.slider_thick = Slider(px, y, sw, 1, 8, 1, "Thickness")
         y += 55
 
         # Color picker
@@ -284,7 +286,7 @@ class App:
         y += bh + 8
         self.btn_save = Button(px, y, bw, bh, "Save PNG", color=(60, 110, 70))
 
-        self.sliders = [self.slider_R, self.slider_r, self.slider_d, self.slider_speed]
+        self.sliders = [self.slider_R, self.slider_r, self.slider_d, self.slider_speed, self.slider_thick]
         self.buttons = [self.btn_draw, self.btn_clear, self.btn_save]
 
         self.hovered_btn = None
@@ -314,7 +316,8 @@ class App:
         self.draw_total = len(self.draw_points)
         self.draw_index = 1
         self.drawing = True
-        self.canvas.fill(CANVAS_BG)
+        # Canvas is NOT cleared here — curves layer on top of each other.
+        # Use the Clear button to wipe the canvas.
 
     def _draw_panel(self):
         panel = pygame.Surface((PANEL_W, WINDOW_H))
@@ -368,6 +371,7 @@ class App:
         if not self.drawing:
             return
         speed = self.slider_speed.value * 4  # segments per frame
+        thick = self.slider_thick.value
         cp = self.color_picker
         for _ in range(speed):
             if self.draw_index >= self.draw_total:
@@ -378,7 +382,7 @@ class App:
             color = cp.get_color(self.draw_index, self.draw_total)
             pygame.draw.line(self.canvas, color,
                              (int(p1[0]), int(p1[1])),
-                             (int(p2[0]), int(p2[1])), 1)
+                             (int(p2[0]), int(p2[1])), thick)
             self.draw_index += 1
 
     def run(self):
