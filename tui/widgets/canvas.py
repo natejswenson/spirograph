@@ -61,8 +61,7 @@ class CanvasWidget(Widget):
         px_h = h_cells * cell.height
         px   = max(64, min(px_w, px_h))   # square image: take smaller dim
 
-        img = pil_image.copy()
-        img.thumbnail((px, px), PILImage.LANCZOS)
+        img = pil_image.copy().resize((px, px), PILImage.LANCZOS)
 
         # Vertical centering: compute how many rows the rendered image takes,
         # then push it down by half the remaining rows.

@@ -17,16 +17,13 @@ from .drawing_engine import DrawingEngine
 from .widgets.slider import SpiroSlider
 from .widgets.color_picker import ColorPicker
 from .widgets.canvas import CanvasWidget
-from .widgets.preview import PreviewWidget
 
-# ── Slider definitions (label, min, max, init, color_index, id) ──────────────
-_SLIDERS = [
-    ("Big Circle",   20, 200, 150, 0, "slider-R"),
-    ("Little Wheel", 10, 150,  80, 1, "slider-r"),
-    ("Pen Reach",    10, 150, 100, 2, "slider-d"),
-    ("Speed",         1,  20,   5, 3, "slider-speed"),
-    ("Thickness",     1,   8,   2, 4, "slider-thick"),
-]
+# ── Section-rule helper ───────────────────────────────────────────────────────
+
+def _rule(label: str) -> Static:
+    """Decorated horizontal rule: ─ LABEL ────────────────────"""
+    text = f"─ {label} " + "─" * 50
+    return Static(text, classes="section-rule")
 
 
 class SpirographTUIApp(App):
@@ -35,9 +32,10 @@ class SpirographTUIApp(App):
     CSS_PATH = os.path.join(os.path.dirname(__file__), "theme.tcss")
 
     BINDINGS = [
-        Binding("ctrl+z", "undo", "Undo"),
-        Binding("escape", "quit", "Quit"),
-        Binding("q",      "quit", "Quit", show=False),
+        Binding("ctrl+z", "undo",   "Undo"),
+        Binding("escape", "quit",   "Quit"),
+        Binding("q",      "quit",   "Quit", show=False),
+        Binding("d",      "draw",   "Draw", show=False),
     ]
 
     def __init__(self) -> None:
@@ -71,35 +69,62 @@ class SpirographTUIApp(App):
     # ── Layout ────────────────────────────────────────────────────────────────
 
     def compose(self) -> ComposeResult:
-        with Vertical(id="panel"):
-            yield Static("SPIROGRAPH STUDIO", id="panel-title")
-            yield PreviewWidget(id="preview")
+        with Horizontal(id="main"):
+            with Vertical(id="panel"):
+                yield Static("SPIROGRAPH STUDIO", id="panel-title")
 
-            yield Static("PARAMETERS", classes="section-header")
-            for label, mn, mx, init, color_idx, sid in _SLIDERS:
+                # Primary action
+                yield Button("DRAW", id="btn-draw")
+
+                # Secondary actions
+                with Horizontal(id="btn-secondary"):
+                    yield Button("UNDO",  id="btn-undo")
+                    yield Button("CLEAR", id="btn-clear")
+                    yield Button("SAVE",  id="btn-save")
+
+                # Shape parameters
+                yield _rule("SHAPE")
                 yield SpiroSlider(
-                    label=label,
-                    mn=mn,
-                    mx=mx,
-                    init=init,
-                    color=_theme.SLIDER_COLORS[color_idx],
-                    slider_id=sid,
+                    label="Big Circle",
+                    mn=20, mx=200, init=150,
+                    color=_theme.SLIDER_COLORS[0],
+                    slider_id="slider-R",
+                )
+                yield SpiroSlider(
+                    label="Little Wheel",
+                    mn=10, mx=150, init=80,
+                    color=_theme.SLIDER_COLORS[1],
+                    slider_id="slider-r",
+                )
+                yield SpiroSlider(
+                    label="Pen Reach",
+                    mn=10, mx=150, init=100,
+                    color=_theme.SLIDER_COLORS[2],
+                    slider_id="slider-d",
                 )
 
-            yield Static("COLOR", classes="section-header")
-            yield ColorPicker(id="color-picker")
+                # Render parameters
+                yield _rule("RENDER")
+                yield SpiroSlider(
+                    label="Speed",
+                    mn=1, mx=20, init=5,
+                    color=_theme.SLIDER_COLORS[3],
+                    slider_id="slider-speed",
+                )
+                yield SpiroSlider(
+                    label="Thickness",
+                    mn=1, mx=8, init=2,
+                    color=_theme.SLIDER_COLORS[4],
+                    slider_id="slider-thick",
+                )
 
-            yield Static("ACTIONS", classes="section-header")
-            with Horizontal(id="btn-row-1"):
-                yield Button("DRAW",  id="btn-draw",  variant="primary")
-                yield Button("UNDO",  id="btn-undo",  variant="warning")
-            with Horizontal(id="btn-row-2"):
-                yield Button("CLEAR", id="btn-clear", variant="error")
-                yield Button("SAVE",  id="btn-save",  variant="success")
+                # Color
+                yield _rule("COLOR")
+                yield ColorPicker(id="color-picker")
 
-            yield Static("", id="status")
+            yield CanvasWidget(id="canvas")
 
-        yield CanvasWidget(id="canvas")
+        yield Static("", id="footer")
 
     def on_mount(self) -> None:
         self.query_one(CanvasWidget).refresh_canvas(self._engine.canvas)
@@ -111,29 +136,42 @@ class SpirographTUIApp(App):
         cp = self._color_picker()
         self._engine.step(self._speed() * 5, self._thick(), cp)
 
-        self.query_one(PreviewWidget).update(
-            self._R(), self._r(), self._d(),
-            self._pen_color(),
-            self._engine.drawing,
-        )
-
         if self._engine.take_dirty():
             self.query_one(CanvasWidget).refresh_canvas(self._engine.canvas)
 
-        # Status bar
+        # Draw button label — shows progress during animation
+        btn = self.query_one("#btn-draw", Button)
+        if self._engine.drawing:
+            pct = int(100 * self._engine.draw_index / max(1, self._engine.draw_total))
+            btn.label = f"DRAWING  {pct}%"
+            btn.add_class("drawing")
+        else:
+            btn.label = "DRAW"
+            btn.remove_class("drawing")
+
+        # Footer status
         if self._save_flash > 0:
             self._save_flash -= 1
-            self._update_status(f"Saved  ·  layers={self._engine.layer_count}")
+            self._update_footer(
+                f"Saved  ·  R={self._R()}  r={self._r()}  d={self._d()}"
+                f"  ·  layers={self._engine.layer_count}"
+            )
         elif self._engine.drawing:
             pct = int(100 * self._engine.draw_index / max(1, self._engine.draw_total))
-            self._update_status(f"Drawing  {pct}%  ·  undo={self._engine.undo_count}")
+            self._update_footer(
+                f"R={self._R()}  r={self._r()}  d={self._d()}"
+                f"  ·  Drawing {pct}%"
+                f"  ·  layers={self._engine.layer_count}"
+            )
         else:
-            self._update_status(
-                f"layers={self._engine.layer_count}  ·  undo={self._engine.undo_count}"
+            self._update_footer(
+                f"R={self._R()}  r={self._r()}  d={self._d()}"
+                f"  ·  layers={self._engine.layer_count}"
+                f"  ·  undo={self._engine.undo_count}"
             )
 
-    def _update_status(self, msg: str) -> None:
-        self.query_one("#status", Static).update(msg)
+    def _update_footer(self, msg: str) -> None:
+        self.query_one("#footer", Static).update(msg)
 
     # ── Button callbacks ──────────────────────────────────────────────────────
 
@@ -155,6 +193,9 @@ class SpirographTUIApp(App):
     def action_undo(self) -> None:
         self._engine.pop_undo()
         self.query_one(CanvasWidget).refresh_canvas(self._engine.canvas)
+
+    def action_draw(self) -> None:
+        self._engine.start(self._R(), self._r(), self._d())
 
     # ── Save ──────────────────────────────────────────────────────────────────
 

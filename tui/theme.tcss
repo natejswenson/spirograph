@@ -1,14 +1,30 @@
 /* Spirograph Studio TUI */
 
+/* ── Top-level layout ───────────────────────────────────────────── */
+
 Screen {
-    layout: horizontal;
     background: #0a0817;
 }
 
-/* ── Control panel ─────────────────────────────────────────────── */
+#main {
+    height: 1fr;
+}
+
+/* ── Footer bar ─────────────────────────────────────────────────── */
+
+#footer {
+    dock: bottom;
+    height: 1;
+    background: #0d0b1a;
+    color: #3d3960;
+    text-align: center;
+    border-top: solid #1e1b36;
+}
+
+/* ── Control panel ──────────────────────────────────────────────── */
 
 #panel {
-    width: 44;
+    width: 48;
     background: #100e20;
     border-right: solid #1e1b36;
     padding: 0 1;
@@ -16,7 +32,7 @@ Screen {
     overflow-x: hidden;
 }
 
-/* ── Panel title ───────────────────────────────────────────────── */
+/* ── Panel title ────────────────────────────────────────────────── */
 
 #panel-title {
     text-align: center;
@@ -27,26 +43,61 @@ Screen {
     margin-bottom: 1;
 }
 
-/* ── Section headers ───────────────────────────────────────────── */
+/* ── Section rules ──────────────────────────────────────────────── */
 
-.section-header {
-    color: #3d3960;
-    text-style: bold;
-    margin: 1 0 0 0;
+.section-rule {
+    height: 1;
+    color: #2e2b50;
+    margin: 1 0 1 0;
     padding: 0;
 }
 
-/* ── Preview widget ────────────────────────────────────────────── */
+/* ── DRAW button (primary, prominent) ──────────────────────────── */
 
-PreviewWidget {
-    height: auto;
-    align: center top;
-    margin-bottom: 1;
-    border-bottom: solid #1e1b36;
-    padding-bottom: 1;
+Button#btn-draw {
+    width: 1fr;
+    height: 3;
+    background: #3b3ea0;
+    color: #c7c9ff;
+    text-style: bold;
+    border: none;
+    margin-bottom: 0;
 }
 
-/* ── Sliders — two lines each ──────────────────────────────────── */
+Button#btn-draw:hover {
+    background: #5558d4;
+}
+
+Button#btn-draw.drawing {
+    background: #1a2e7a;
+    color: #7080e0;
+}
+
+/* ── Secondary button row ───────────────────────────────────────── */
+
+#btn-secondary {
+    height: 2;
+    margin-bottom: 1;
+}
+
+#btn-secondary Button {
+    width: 1fr;
+    height: 2;
+    border: none;
+    text-style: bold;
+}
+
+Button#btn-undo  { background: #6b3c00; color: #fde68a; }
+Button#btn-clear { background: #5c1414; color: #fca5a5; }
+Button#btn-save  { background: #0e3d1e; color: #86efac; }
+
+Button#btn-undo:hover  { background: #b86000; }
+Button#btn-clear:hover { background: #a82020; }
+Button#btn-save:hover  { background: #146830; }
+
+Button:focus { border: none; text-style: bold reverse; }
+
+/* ── Sliders ────────────────────────────────────────────────────── */
 
 SpiroSlider {
     height: 2;
@@ -58,7 +109,7 @@ SpiroSlider:focus {
     background: #15122a;
 }
 
-/* ── Color picker ──────────────────────────────────────────────── */
+/* ── Color picker ───────────────────────────────────────────────── */
 
 ColorPicker {
     height: 2;
@@ -70,44 +121,7 @@ ColorPicker:focus {
     background: #15122a;
 }
 
-/* ── Button rows (2 × 2 grid) ──────────────────────────────────── */
-
-#btn-row-1, #btn-row-2 {
-    height: 3;
-}
-
-#btn-row-1 {
-    margin-top: 1;
-}
-
-#btn-row-1 Button, #btn-row-2 Button {
-    width: 1fr;
-    border: none;
-    text-style: bold;
-}
-
-Button#btn-draw  { background: #3b3ea0; color: #c7c9ff; }
-Button#btn-undo  { background: #6b3c00; color: #fde68a; }
-Button#btn-clear { background: #5c1414; color: #fca5a5; }
-Button#btn-save  { background: #0e3d1e; color: #86efac; }
-
-Button#btn-draw:hover  { background: #5558d4; }
-Button#btn-undo:hover  { background: #b86000; }
-Button#btn-clear:hover { background: #a82020; }
-Button#btn-save:hover  { background: #146830; }
-
-Button:focus { border: none; text-style: bold reverse; }
-
-/* ── Status bar ────────────────────────────────────────────────── */
-
-#status {
-    height: 1;
-    color: #3d3960;
-    text-align: center;
-    margin-top: 1;
-}
-
-/* ── Canvas area ───────────────────────────────────────────────── */
+/* ── Canvas area ────────────────────────────────────────────────── */
 
 CanvasWidget {
     width: 1fr;
