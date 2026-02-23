@@ -13,21 +13,33 @@ Instructions and context for Claude Code when working on this project.
 
 ### File Roles
 
+**Shared (root level)**
+
 | File | Responsibility |
 |------|---------------|
-| `spirograph.py` | Entry point only — `App().run()` |
-| `app.py` | App class: init, event handling, main loop |
+| `spirograph.py` | Pygame entry point — adds `pygame_app/` to sys.path, calls `App().run()` |
+| `spirograph_tui.py` | TUI entry point |
 | `constants.py` | Layout geometry: window/canvas sizes, save dir |
 | `theme.py` | Visual stylesheet: all colors, radii, alphas, font sizes |
+| `spiro_math.py` | `SpiroMath`: hypotrochoid math, period calculation |
+
+**Pygame app (`pygame_app/`)**
+
+| File | Responsibility |
+|------|---------------|
+| `app.py` | App class: init, event handling, main loop |
 | `drawing_engine.py` | Canvas surface, undo stack, animated drawing state |
 | `preview.py` | Animated mechanism preview widget (local surface approach) |
 | `renderer.py` | Stateless frame rendering: `draw_panel()`, `draw_canvas()` |
-| `spiro_math.py` | `SpiroMath`: hypotrochoid math, period calculation |
 | `ui_layout.py` | `build_ui()`: constructs all widgets and card rects |
-| `utils.py` | Shared helpers: `load_fonts`, `draw_card`, `make_canvas_bg`, `lerp_color`, `gcd` |
+| `utils.py` | Helpers: `load_fonts`, `draw_card`, `make_canvas_bg`, `lerp_color`, `gcd` |
 | `widgets/slider.py` | `Slider` widget |
 | `widgets/button.py` | `Button` widget |
 | `widgets/color_picker.py` | `ColorPicker` widget (swatches + rainbow mode) |
+
+**Note:** Each `pygame_app/` file inserts itself (`__file__` dir) and the repo root into `sys.path` so that sibling imports (`utils`, `drawing_engine`, etc.) and shared imports (`theme`, `constants`, `spiro_math`) both resolve correctly without a package install step.
+
+**TUI app (`tui/`)** — see tui/ directory for details.
 
 ### Key Decisions
 

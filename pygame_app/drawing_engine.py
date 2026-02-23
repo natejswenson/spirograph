@@ -1,3 +1,7 @@
+import os as _os, sys as _sys
+_sys.path.insert(0, _os.path.dirname(_os.path.abspath(__file__)))
+_sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+
 import pygame
 from spiro_math import SpiroMath
 from utils import make_canvas_bg
