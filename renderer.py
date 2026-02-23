@@ -1,3 +1,4 @@
+import math
 import pygame
 import theme
 from utils import draw_card, lerp_color

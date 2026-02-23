@@ -42,6 +42,7 @@ CARD_RADIUS    = 10
 CARD_SHADOW_A  = 55     # shadow alpha
 
 # ── Slider ───────────────────────────────────────────────────────────────────
+SLIDER_ROW_H      = 44  # vertical space each slider occupies
 SLIDER_TRACK_H    = 7
 SLIDER_TRACK_R    = 4   # border-radius
 SLIDER_HANDLE_R   = 11

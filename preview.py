@@ -62,36 +62,36 @@ class PreviewWidget:
                               cy + int(R_px * math.sin(a))), 1)
 
         # Inner wheel
-        wx   = cx + int((R - r_clamped) * scale * math.cos(self._angle))
-        wy   = cy + int((R - r_clamped) * scale * math.sin(self._angle))
-        r_px = max(2, int(r_clamped * scale))
+        wheel_x = cx + int((R - r_clamped) * scale * math.cos(self._angle))
+        wheel_y = cy + int((R - r_clamped) * scale * math.sin(self._angle))
+        r_px    = max(2, int(r_clamped * scale))
 
-        wf = pygame.Surface((r_px * 2 + 2, r_px * 2 + 2), pygame.SRCALPHA)
-        pygame.draw.circle(wf, (*theme.PREVIEW_WHEEL_FILL, theme.PREVIEW_WHEEL_FILL_A),
+        wheel_surf = pygame.Surface((r_px * 2 + 2, r_px * 2 + 2), pygame.SRCALPHA)
+        pygame.draw.circle(wheel_surf, (*theme.PREVIEW_WHEEL_FILL, theme.PREVIEW_WHEEL_FILL_A),
                            (r_px + 1, r_px + 1), r_px)
-        local.blit(wf, (wx - r_px - 1, wy - r_px - 1))
-        pygame.draw.circle(local, theme.SLIDER_COLORS[1], (wx, wy), r_px, 2)
+        local.blit(wheel_surf, (wheel_x - r_px - 1, wheel_y - r_px - 1))
+        pygame.draw.circle(local, theme.SLIDER_COLORS[1], (wheel_x, wheel_y), r_px, 2)
 
         # Gear dots + crosshair
         n_teeth = max(4, int(r_clamped / 12))
         for i in range(n_teeth):
-            ga = inner_rot + i * (2 * math.pi / n_teeth)
+            gear_angle = inner_rot + i * (2 * math.pi / n_teeth)
             pygame.draw.circle(local, theme.SLIDER_COLORS[1],
-                               (wx + int((r_px - 3) * math.cos(ga)),
-                                wy + int((r_px - 3) * math.sin(ga))), 2)
+                               (wheel_x + int((r_px - 3) * math.cos(gear_angle)),
+                                wheel_y + int((r_px - 3) * math.sin(gear_angle))), 2)
         pygame.draw.line(local, theme.PREVIEW_CROSSHAIR,
-                         (wx - r_px + 4, wy), (wx + r_px - 4, wy), 1)
+                         (wheel_x - r_px + 4, wheel_y), (wheel_x + r_px - 4, wheel_y), 1)
         pygame.draw.line(local, theme.PREVIEW_CROSSHAIR,
-                         (wx, wy - r_px + 4), (wx, wy + r_px - 4), 1)
+                         (wheel_x, wheel_y - r_px + 4), (wheel_x, wheel_y + r_px - 4), 1)
 
         # Pen arm + dot
-        px2 = wx + int(d * scale * math.cos(inner_rot))
-        py2 = wy + int(d * scale * math.sin(inner_rot))
+        pen_x = wheel_x + int(d * scale * math.cos(inner_rot))
+        pen_y = wheel_y + int(d * scale * math.sin(inner_rot))
         pygame.draw.line(local, (*theme.SLIDER_COLORS[2], theme.PREVIEW_PEN_ARM_A),
-                         (wx, wy), (px2, py2), 2)
-        pygame.draw.circle(local, pen_color,         (px2, py2), theme.PREVIEW_PEN_R)
-        pygame.draw.circle(local, (255, 255, 255),   (px2, py2), theme.PREVIEW_PEN_RING_R)
-        pygame.draw.circle(local, pen_color,         (px2, py2), theme.PREVIEW_PEN_CORE_R)
+                         (wheel_x, wheel_y), (pen_x, pen_y), 2)
+        pygame.draw.circle(local, pen_color,         (pen_x, pen_y), theme.PREVIEW_PEN_R)
+        pygame.draw.circle(local, (255, 255, 255),   (pen_x, pen_y), theme.PREVIEW_PEN_RING_R)
+        pygame.draw.circle(local, pen_color,         (pen_x, pen_y), theme.PREVIEW_PEN_CORE_R)
 
         # R= / r= labels
         f     = fonts["small"]
@@ -100,6 +100,6 @@ class PreviewWidget:
                                     theme.PREVIEW_LABEL_LERP))
         local.blit(lbl_R, (cx - lbl_R.get_width() // 2, sz - 16))
         lbl_r = f.render(f"r={r}", True, theme.SLIDER_COLORS[1])
-        local.blit(lbl_r, (min(wx + r_px + 3, sz - lbl_r.get_width() - 2), wy - 7))
+        local.blit(lbl_r, (min(wheel_x + r_px + 3, sz - lbl_r.get_width() - 2), wheel_y - 7))
 
         surface.blit(local, (self.x, self.y))

@@ -11,4 +11,5 @@ PANEL_W      = 330
 CANVAS_SIZE  = 680
 CANVAS_X     = PANEL_W + 25
 CANVAS_Y     = (WINDOW_H - CANVAS_SIZE) // 2
-PREVIEW_SIZE = 155
+PREVIEW_SIZE  = 155
+CANVAS_MARGIN = 28   # padding between canvas edge and first drawn point

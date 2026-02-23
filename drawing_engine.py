@@ -1,7 +1,7 @@
 import pygame
 from spiro_math import SpiroMath
 from utils import make_canvas_bg
-from constants import CANVAS_SIZE
+from constants import CANVAS_SIZE, CANVAS_MARGIN
 
 
 class DrawingEngine:
@@ -47,7 +47,7 @@ class DrawingEngine:
     def start(self, R, r, d):
         pts     = self._spiro.compute_points(R, r, d)
         max_ext = max(max(abs(v) for pt in pts for v in pt), 1)
-        scale   = (CANVAS_SIZE / 2 - 28) / max_ext
+        scale   = (CANVAS_SIZE / 2 - CANVAS_MARGIN) / max_ext
         cx = cy = CANVAS_SIZE // 2
         self.draw_points = [(cx + x * scale, cy + y * scale) for x, y in pts]
         self.draw_total  = len(self.draw_points)

@@ -7,7 +7,7 @@ from utils import clamp
 class Slider:
     TRACK_H  = theme.SLIDER_TRACK_H
     HANDLE_R = theme.SLIDER_HANDLE_R
-    ROW_H    = 44
+    ROW_H    = theme.SLIDER_ROW_H
 
     def __init__(self, x, y, w, mn, mx, init, emoji, label, color, fonts):
         self.track    = pygame.Rect(x, y + 30, w, self.TRACK_H)
