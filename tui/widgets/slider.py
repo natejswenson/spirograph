@@ -1,4 +1,4 @@
-"""SpiroSlider — two-line keyboard + mouse slider widget for the TUI."""
+"""SpiroSlider — two-line draggable slider widget for the TUI."""
 import sys
 import os
 
@@ -17,8 +17,12 @@ import theme
 class SpiroSlider(Widget):
     """
     Two-line slider:
-      Line 0 — LABEL (left)  VALUE (right, accent)
-      Line 1 — ████████▌────────────────  (full-width track + handle)
+      Line 0 — LABEL (left)   VALUE (right, accent color)
+      Line 1 — ██████▌──────  (full-width track + draggable handle)
+
+    Interaction:
+      Mouse  — click or drag anywhere on the track row
+      Keys   — ← / → (±1),  Shift+← / Shift+→ (±10)
     """
 
     BINDINGS = [
@@ -56,45 +60,53 @@ class SpiroSlider(Widget):
         self._color    = color
         self.value     = init
         self.can_focus = True
+        self._dragging = False
 
     # ── Rendering ─────────────────────────────────────────────────────────────
 
     def render(self) -> Text:
-        r, g, b  = self._color
-        hx       = f"#{r:02x}{g:02x}{b:02x}"
-        w        = max(12, self.size.width)
-        val_str  = str(self.value)
+        r, g, b = self._color
+        hx      = f"#{r:02x}{g:02x}{b:02x}"
+        w       = max(12, self.size.width)
+        val_str = str(self.value)
 
-        # ── Line 0: label + spacer + value ────────────────────────────────
+        # Line 0: label (left) + padding + value (right)
         text = Text(no_wrap=True)
         text.append(f" {self.label}", style="bold white")
         pad = w - 1 - len(self.label) - len(val_str) - 1
         text.append(" " * max(1, pad))
-        text.append(f"{val_str}", style=f"bold {hx}")
+        text.append(val_str, style=f"bold {hx}")
         text.append("\n")
 
-        # ── Line 1: track (1-char margin each side, handle at exact pos) ──
+        # Line 1: track — filled ██ + white ▌ handle + empty ──
         track_w = max(4, w - 2)
         ratio   = (self.value - self.min_val) / max(1, self.max_val - self.min_val)
-        # Keep one slot for the handle marker
         filled  = max(0, min(track_w - 1, int(ratio * (track_w - 1))))
         empty   = track_w - filled - 1
 
         text.append(" ")
         text.append("█" * filled, style=hx)
-        text.append("▌", style="bold white")     # handle
+        text.append("▌", style="bold white")
         text.append("─" * empty,  style="color(238)")
         text.append(" ")
 
         return text
 
-    # ── Value helpers ─────────────────────────────────────────────────────────
+    # ── Internal helpers ──────────────────────────────────────────────────────
 
     def _set_value(self, v: int) -> None:
         clamped = max(self.min_val, min(self.max_val, v))
         if clamped != self.value:
             self.value = clamped
             self.post_message(self.ValueChanged(self, clamped))
+
+    def _x_to_value(self, x: int) -> int:
+        """Convert an x cell-coordinate to a slider value."""
+        w       = self.size.width or 42
+        track_w = max(4, w - 2)
+        rel_x   = x - 1                     # 1-char left margin
+        ratio   = max(0.0, min(1.0, rel_x / max(1, track_w - 1)))
+        return int(self.min_val + ratio * (self.max_val - self.min_val))
 
     # ── Key actions ───────────────────────────────────────────────────────────
 
@@ -103,13 +115,19 @@ class SpiroSlider(Widget):
     def action_dec_large(self) -> None: self._set_value(self.value - 10)
     def action_inc_large(self) -> None: self._set_value(self.value + 10)
 
-    # ── Mouse ─────────────────────────────────────────────────────────────────
+    # ── Mouse — click + drag ──────────────────────────────────────────────────
 
     def on_mouse_down(self, event: events.MouseDown) -> None:
         self.focus()
-        if event.y == 1:  # click on the track row
-            w       = self.size.width or 42
-            track_w = max(4, w - 2)
-            rel_x   = event.x - 1          # account for 1-char left margin
-            ratio   = max(0.0, min(1.0, rel_x / max(1, track_w - 1)))
-            self._set_value(int(self.min_val + ratio * (self.max_val - self.min_val)))
+        self._dragging = True
+        self.capture_mouse()                 # receive move/up events globally
+        self._set_value(self._x_to_value(event.x))
+
+    def on_mouse_move(self, event: events.MouseMove) -> None:
+        if self._dragging:
+            self._set_value(self._x_to_value(event.x))
+
+    def on_mouse_up(self, event: events.MouseUp) -> None:
+        if self._dragging:
+            self._dragging = False
+            self.release_mouse()

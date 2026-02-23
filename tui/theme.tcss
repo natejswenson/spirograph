@@ -111,7 +111,12 @@ Button:focus { border: none; text-style: bold reverse; }
 
 CanvasWidget {
     width: 1fr;
-    layout: vertical;
-    align: center middle;
+    background: #06050f;
+}
+
+/* Middle+Center containers inside CanvasWidget fill the full area */
+CanvasWidget Middle {
+    width: 1fr;
+    height: 1fr;
     background: #06050f;
 }
