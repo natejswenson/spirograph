@@ -1,12 +1,16 @@
 # Spirograph Studio
 
-An interactive spirograph art app built with Python and Pygame. Roll a small wheel inside a large ring, adjust the pen offset, and watch intricate geometric patterns emerge — just like the classic toy.
+An interactive spirograph art app built with Python. Roll a small wheel inside a large ring, adjust the pen offset, and watch intricate geometric patterns emerge — just like the classic toy.
 
-![Spirograph Studio](https://img.shields.io/badge/Python-3.13%2B-blue) ![Pygame](https://img.shields.io/badge/Pygame-required-green)
+Runs in two modes: a **Pygame desktop app** and a **terminal TUI** (via Textual + Kitty Graphics Protocol).
+
+## Screenshot
+
+![Spirograph Studio TUI](assets/tui.png)
 
 ## Features
 
-- **Live mechanism preview** — animated outer ring, rolling inner wheel, and pen arm so you can see exactly what you're drawing before you draw it
+- **Animated drawing** — curves animate onto the canvas segment by segment
 - **Layered drawing** — draw multiple curves on top of each other to build complex compositions
 - **20-level undo** — step back through your work one layer at a time
 - **Rainbow mode** — full HSV spectrum gradient across any curve
@@ -14,15 +18,25 @@ An interactive spirograph art app built with Python and Pygame. Roll a small whe
 
 ## Quick Start
 
+### Terminal TUI (Ghostty / Kitty terminal recommended)
+
 ```bash
-# Requires Python 3.13 (pygame has no wheel for 3.14 yet)
 python3.13 -m venv .venv
 source .venv/bin/activate
-pip install pygame
+pip install pygame pillow textual textual-image
+./spirograph_tui.py
+```
+
+### Pygame Desktop App
+
+```bash
+source .venv/bin/activate
 python spirograph.py
 ```
 
-## Controls
+> **Note:** Requires Python 3.13 — pygame has no wheel for 3.14+.
+
+## TUI Controls
 
 | Control | What it does |
 |---------|-------------|
@@ -30,15 +44,15 @@ python spirograph.py
 | **Little Wheel** slider | Inner rolling wheel radius (r) |
 | **Pen Reach** slider | Pen offset from wheel center (d) |
 | **Speed** slider | Drawing speed (segments per frame) |
-| **Line Width** slider | Stroke thickness |
-| **Color swatches** | Pick a solid pen color |
-| **Rainbow checkbox** | Cycle through the full color spectrum |
-| **▶ Draw** | Compute and animate the current curve |
-| **↩ Undo** | Remove the last drawn layer |
-| **✕ Clear** | Wipe the canvas (undoable) |
-| **💾 Save PNG** | Save canvas to `~/Desktop/spirograph/` |
-| **Cmd/Ctrl+Z** | Keyboard undo |
-| **Esc** | Quit |
+| **Thickness** slider | Stroke width |
+| **Color swatches** | Pick a solid pen color (click or ← →) |
+| **Rainbow mode** | Press `r` to cycle through the full spectrum |
+| **DRAW** button | Compute and animate the current curve (or press `d`) |
+| **UNDO** button | Remove the last drawn layer |
+| **CLEAR** button | Wipe the canvas (undoable) |
+| **SAVE** button | Save canvas PNG to `~/Desktop/spirograph/` |
+| `Ctrl+Z` | Keyboard undo |
+| `Esc` / `q` | Quit |
 
 ## Math
 
@@ -55,24 +69,26 @@ The curve closes after `r / gcd(R, r)` full rotations of the inner wheel.
 
 ```
 spirograph/
-├── spirograph.py        # Entry point
-├── app.py               # Main app class, event loop
+├── spirograph.py        # Pygame entry point
+├── spirograph_tui.py    # TUI entry point
+├── app.py               # Pygame app class, event loop
 ├── constants.py         # Layout geometry (window/canvas sizes)
 ├── theme.py             # Visual stylesheet (colors, radii, alphas)
-├── drawing_engine.py    # Canvas surface, undo stack, animation state
-├── preview.py           # Animated mechanism preview widget
-├── renderer.py          # Frame rendering (panel + canvas)
-├── spiro_math.py        # Hypotrochoid math
-├── ui_layout.py         # Widget construction and card layout
-├── utils.py             # Shared helpers (fonts, colors, canvas bg)
-├── widgets/
-│   ├── slider.py        # Slider widget
-│   ├── button.py        # Button widget
-│   └── color_picker.py  # Color swatch + rainbow picker
+├── drawing_engine.py    # Pygame canvas, undo stack, animation state
+├── spiro_math.py        # Hypotrochoid math (shared by both apps)
+├── tui/
+│   ├── app.py           # Textual app, layout, tick loop
+│   ├── drawing_engine.py# PIL canvas, undo stack, animation state
+│   ├── theme.tcss       # Textual CSS
+│   └── widgets/
+│       ├── canvas.py    # Canvas display (textual-image / TGP)
+│       ├── slider.py    # Draggable slider widget
+│       └── color_picker.py # Color swatch + rainbow picker
 └── requirements.txt
 ```
 
 ## Requirements
 
 - Python 3.13+
-- pygame
+- `pygame` — desktop app
+- `pillow`, `textual`, `textual-image` — terminal TUI

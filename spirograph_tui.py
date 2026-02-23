@@ -1,3 +1,4 @@
+#!/usr/bin/env python3.13
 """Entry point for Spirograph Studio TUI (Textual + Kitty/TGP)."""
 import sys
 import os
