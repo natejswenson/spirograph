@@ -1,4 +1,4 @@
-/* Spirograph Studio TUI — Textual stylesheet */
+/* Spirograph Studio TUI */
 
 Screen {
     layout: horizontal;
@@ -20,7 +20,7 @@ Screen {
 
 #panel-title {
     text-align: center;
-    color: #c8c4e8;
+    color: #a09ac8;
     text-style: bold;
     padding: 1 0 1 0;
     border-bottom: solid #1e1b36;
@@ -46,16 +46,16 @@ PreviewWidget {
     padding-bottom: 1;
 }
 
-/* ── Sliders ───────────────────────────────────────────────────── */
+/* ── Sliders — two lines each ──────────────────────────────────── */
 
 SpiroSlider {
-    height: 1;
+    height: 2;
     margin: 0 0 1 0;
     padding: 0;
 }
 
 SpiroSlider:focus {
-    background: #17152d;
+    background: #15122a;
 }
 
 /* ── Color picker ──────────────────────────────────────────────── */
@@ -67,14 +67,13 @@ ColorPicker {
 }
 
 ColorPicker:focus {
-    background: #17152d;
+    background: #15122a;
 }
 
-/* ── Button rows ───────────────────────────────────────────────── */
+/* ── Button rows (2 × 2 grid) ──────────────────────────────────── */
 
 #btn-row-1, #btn-row-2 {
     height: 3;
-    margin: 0 0 0 0;
 }
 
 #btn-row-1 {
@@ -87,20 +86,17 @@ ColorPicker:focus {
     text-style: bold;
 }
 
-Button#btn-draw  { background: #4f52c8; color: #e8e6ff; }
-Button#btn-undo  { background: #8a4e00; color: #fde68a; }
-Button#btn-clear { background: #7a1a1a; color: #fca5a5; }
-Button#btn-save  { background: #145228; color: #86efac; }
+Button#btn-draw  { background: #3b3ea0; color: #c7c9ff; }
+Button#btn-undo  { background: #6b3c00; color: #fde68a; }
+Button#btn-clear { background: #5c1414; color: #fca5a5; }
+Button#btn-save  { background: #0e3d1e; color: #86efac; }
 
-Button#btn-draw:hover  { background: #6366f1; }
-Button#btn-undo:hover  { background: #d97706; }
-Button#btn-clear:hover { background: #dc2626; }
-Button#btn-save:hover  { background: #16a34a; }
+Button#btn-draw:hover  { background: #5558d4; }
+Button#btn-undo:hover  { background: #b86000; }
+Button#btn-clear:hover { background: #a82020; }
+Button#btn-save:hover  { background: #146830; }
 
-Button:focus {
-    border: none;
-    text-style: bold reverse;
-}
+Button:focus { border: none; text-style: bold reverse; }
 
 /* ── Status bar ────────────────────────────────────────────────── */
 
@@ -109,14 +105,13 @@ Button:focus {
     color: #3d3960;
     text-align: center;
     margin-top: 1;
-    padding: 0;
 }
 
 /* ── Canvas area ───────────────────────────────────────────────── */
 
 CanvasWidget {
     width: 1fr;
+    layout: vertical;
     align: center middle;
-    padding: 1;
     background: #06050f;
 }

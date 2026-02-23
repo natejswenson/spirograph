@@ -1,4 +1,4 @@
-"""SpiroSlider — keyboard + mouse slider widget for the TUI."""
+"""SpiroSlider — two-line keyboard + mouse slider widget for the TUI."""
 import sys
 import os
 
@@ -13,13 +13,13 @@ from rich.text import Text
 
 import theme
 
-# Fixed layout constants (panel content width is ~38 chars)
-_LABEL_W = 13   # label padded to this width
-_VAL_W   = 4    # max digit width (e.g. "200")
-
 
 class SpiroSlider(Widget):
-    """A horizontal slider rendered with Rich markup, driven by keyboard and mouse."""
+    """
+    Two-line slider:
+      Line 0 — LABEL (left)  VALUE (right, accent)
+      Line 1 — ████████▌────────────────  (full-width track + handle)
+    """
 
     BINDINGS = [
         Binding("left",        "dec_small", "−1",  show=False),
@@ -60,23 +60,32 @@ class SpiroSlider(Widget):
     # ── Rendering ─────────────────────────────────────────────────────────────
 
     def render(self) -> Text:
-        r, g, b = self._color
-        hx      = f"#{r:02x}{g:02x}{b:02x}"
+        r, g, b  = self._color
+        hx       = f"#{r:02x}{g:02x}{b:02x}"
+        w        = max(12, self.size.width)
+        val_str  = str(self.value)
 
-        w       = self.size.width or 38
-        # layout:  LABEL(13) + " " + TRACK + "  " + VALUE(4)
-        track_w = max(4, w - _LABEL_W - 1 - 2 - _VAL_W)
+        # ── Line 0: label + spacer + value ────────────────────────────────
+        text = Text(no_wrap=True)
+        text.append(f" {self.label}", style="bold white")
+        pad = w - 1 - len(self.label) - len(val_str) - 1
+        text.append(" " * max(1, pad))
+        text.append(f"{val_str}", style=f"bold {hx}")
+        text.append("\n")
+
+        # ── Line 1: track (1-char margin each side, handle at exact pos) ──
+        track_w = max(4, w - 2)
         ratio   = (self.value - self.min_val) / max(1, self.max_val - self.min_val)
-        filled  = max(0, min(track_w, int(ratio * track_w)))
-        empty   = track_w - filled
+        # Keep one slot for the handle marker
+        filled  = max(0, min(track_w - 1, int(ratio * (track_w - 1))))
+        empty   = track_w - filled - 1
 
-        text = Text(no_wrap=True, overflow="ellipsis")
-        text.append(f"{self.label:<{_LABEL_W}}", style="bold white")
         text.append(" ")
         text.append("█" * filled, style=hx)
+        text.append("▌", style="bold white")     # handle
         text.append("─" * empty,  style="color(238)")
-        text.append("  ")
-        text.append(f"{self.value:>{_VAL_W}}", style=f"bold {hx}")
+        text.append(" ")
+
         return text
 
     # ── Value helpers ─────────────────────────────────────────────────────────
@@ -98,9 +107,9 @@ class SpiroSlider(Widget):
 
     def on_mouse_down(self, event: events.MouseDown) -> None:
         self.focus()
-        w         = self.size.width or 38
-        track_w   = max(4, w - _LABEL_W - 1 - 2 - _VAL_W)
-        track_x0  = _LABEL_W + 1   # where track begins
-        rel_x     = event.x - track_x0
-        ratio     = max(0.0, min(1.0, rel_x / max(1, track_w)))
-        self._set_value(int(self.min_val + ratio * (self.max_val - self.min_val)))
+        if event.y == 1:  # click on the track row
+            w       = self.size.width or 42
+            track_w = max(4, w - 2)
+            rel_x   = event.x - 1          # account for 1-char left margin
+            ratio   = max(0.0, min(1.0, rel_x / max(1, track_w - 1)))
+            self._set_value(int(self.min_val + ratio * (self.max_val - self.min_val)))
