@@ -2,25 +2,38 @@
 
 Screen {
     layout: horizontal;
-    background: #0f0c1c;
+    background: #0a0817;
 }
 
 /* ── Control panel ─────────────────────────────────────────────── */
 
 #panel {
-    width: 40;
-    background: #16132a;
-    border-right: solid #34305c;
-    padding: 1 1;
+    width: 44;
+    background: #100e20;
+    border-right: solid #1e1b36;
+    padding: 0 1;
     overflow-y: auto;
     overflow-x: hidden;
 }
 
+/* ── Panel title ───────────────────────────────────────────────── */
+
 #panel-title {
     text-align: center;
-    color: #ebe8ff;
+    color: #c8c4e8;
     text-style: bold;
-    padding: 0 0 1 0;
+    padding: 1 0 1 0;
+    border-bottom: solid #1e1b36;
+    margin-bottom: 1;
+}
+
+/* ── Section headers ───────────────────────────────────────────── */
+
+.section-header {
+    color: #3d3960;
+    text-style: bold;
+    margin: 1 0 0 0;
+    padding: 0;
 }
 
 /* ── Preview widget ────────────────────────────────────────────── */
@@ -28,64 +41,75 @@ Screen {
 PreviewWidget {
     height: auto;
     align: center top;
-    padding: 0 0 1 0;
+    margin-bottom: 1;
+    border-bottom: solid #1e1b36;
+    padding-bottom: 1;
 }
 
-/* ── Slider ────────────────────────────────────────────────────── */
+/* ── Sliders ───────────────────────────────────────────────────── */
 
 SpiroSlider {
     height: 1;
     margin: 0 0 1 0;
-    padding: 0 1;
+    padding: 0;
 }
 
 SpiroSlider:focus {
-    background: #1e1a38;
+    background: #17152d;
 }
 
 /* ── Color picker ──────────────────────────────────────────────── */
 
 ColorPicker {
-    height: 3;
-    margin: 1 0;
-    padding: 0 1;
+    height: 2;
+    margin: 0 0 1 0;
+    padding: 0;
 }
 
 ColorPicker:focus {
-    background: #1e1a38;
+    background: #17152d;
 }
 
-/* ── Buttons ───────────────────────────────────────────────────── */
+/* ── Button rows ───────────────────────────────────────────────── */
 
-#btn-row {
-    layout: horizontal;
-    height: auto;
-    margin-top: 1;
-}
-
-#btn-row Button {
-    width: 1fr;
+#btn-row-1, #btn-row-2 {
+    height: 3;
     margin: 0 0 0 0;
 }
 
-Button#btn-draw  { background: #6366f1; color: white; }
-Button#btn-undo  { background: #d97706; color: white; }
-Button#btn-clear { background: #dc2626; color: white; }
-Button#btn-save  { background: #16a34a; color: white; }
+#btn-row-1 {
+    margin-top: 1;
+}
 
-Button#btn-draw:hover  { background: #818cf8; }
-Button#btn-undo:hover  { background: #f59e0b; }
-Button#btn-clear:hover { background: #ef4444; }
-Button#btn-save:hover  { background: #22c55e; }
+#btn-row-1 Button, #btn-row-2 Button {
+    width: 1fr;
+    border: none;
+    text-style: bold;
+}
+
+Button#btn-draw  { background: #4f52c8; color: #e8e6ff; }
+Button#btn-undo  { background: #8a4e00; color: #fde68a; }
+Button#btn-clear { background: #7a1a1a; color: #fca5a5; }
+Button#btn-save  { background: #145228; color: #86efac; }
+
+Button#btn-draw:hover  { background: #6366f1; }
+Button#btn-undo:hover  { background: #d97706; }
+Button#btn-clear:hover { background: #dc2626; }
+Button#btn-save:hover  { background: #16a34a; }
+
+Button:focus {
+    border: none;
+    text-style: bold reverse;
+}
 
 /* ── Status bar ────────────────────────────────────────────────── */
 
 #status {
     height: 1;
-    color: #8278af;
+    color: #3d3960;
     text-align: center;
-    padding: 0 1;
     margin-top: 1;
+    padding: 0;
 }
 
 /* ── Canvas area ───────────────────────────────────────────────── */
@@ -94,5 +118,5 @@ CanvasWidget {
     width: 1fr;
     align: center middle;
     padding: 1;
-    background: #08070f;
+    background: #06050f;
 }

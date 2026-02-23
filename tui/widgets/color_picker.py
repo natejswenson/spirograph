@@ -14,14 +14,17 @@ from rich.text import Text
 
 import theme
 
+# Each swatch is 3 chars + 1 gap = 4 chars
+_SWATCH_STRIDE = 4
+
 
 class ColorPicker(Widget):
     """Eight color swatches plus a rainbow mode toggle."""
 
     BINDINGS = [
-        Binding("left",  "prev_swatch", "←", show=False),
-        Binding("right", "next_swatch", "→", show=False),
-        Binding("r",     "toggle_rainbow", "rainbow", show=False),
+        Binding("left",  "prev_swatch", "Prev",   show=False),
+        Binding("right", "next_swatch", "Next",   show=False),
+        Binding("r",     "toggle_rainbow", "Rainbow", show=False),
     ]
 
     selected: reactive[int]  = reactive(0, layout=True)
@@ -43,23 +46,28 @@ class ColorPicker(Widget):
     # ── Rendering ─────────────────────────────────────────────────────────────
 
     def render(self) -> Text:
-        text = Text(no_wrap=True, overflow="ellipsis")
-        text.append("🎨  Color\n", style="bold color(245)")
+        text = Text(no_wrap=True)
 
+        # Swatch row — 8 × (3 chars + 1 space) = 32 chars
         for i, (r, g, b) in enumerate(theme.PRESET_COLORS):
-            hex_col = f"#{r:02x}{g:02x}{b:02x}"
+            hx = f"#{r:02x}{g:02x}{b:02x}"
             if i == self.selected and not self.rainbow:
-                text.append("▐█▌", style=f"bold {hex_col} on {hex_col}")
+                # Selected: bright foreground block + thin selection marker
+                text.append("███", style=f"bold {hx}")
+                text.append("▎", style=f"bold white")
             else:
-                text.append(" █ ", style=f"{hex_col} on {hex_col}")
+                text.append("███", style=f"dim {hx}")
+                text.append(" ")
+
         text.append("\n")
 
-        # Rainbow toggle line
+        # Rainbow toggle
         if self.rainbow:
-            rb_hex = "#{:02x}{:02x}{:02x}".format(*theme.RAINBOW_ACTIVE_COLOR)
-            text.append("[✓] 🌈  Rainbow!", style=f"bold {rb_hex}")
+            rb_hx = "#{:02x}{:02x}{:02x}".format(*theme.RAINBOW_ACTIVE_COLOR)
+            text.append("[x] Rainbow mode", style=f"bold {rb_hx}")
         else:
-            text.append("[ ] 🌈  Rainbow!",  style="color(240)")
+            text.append("[ ] Rainbow mode", style="color(241)")
+
         return text
 
     # ── Color access (same interface as Pygame ColorPicker) ───────────────────
@@ -97,14 +105,11 @@ class ColorPicker(Widget):
 
     def on_mouse_down(self, event: events.MouseDown) -> None:
         self.focus()
-        # Row 0 is the label, row 1 is the swatches (3 chars each)
-        if event.y == 1:
-            # Each swatch is 3 chars wide
-            swatch_idx = event.x // 3
+        if event.y == 0:
+            swatch_idx = event.x // _SWATCH_STRIDE
             if 0 <= swatch_idx < len(theme.PRESET_COLORS):
                 self.selected = swatch_idx
                 self.rainbow  = False
                 self._emit()
-        elif event.y == 2:
-            # Rainbow toggle row
+        elif event.y == 1:
             self.action_toggle_rainbow()

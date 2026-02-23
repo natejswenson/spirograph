@@ -5,7 +5,6 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../.."))
 
 from textual.widget import Widget
-from textual.app import ComposeResult
 from textual.reactive import reactive
 from textual.binding import Binding
 from textual.message import Message
@@ -13,6 +12,10 @@ from textual import events
 from rich.text import Text
 
 import theme
+
+# Fixed layout constants (panel content width is ~38 chars)
+_LABEL_W = 13   # label padded to this width
+_VAL_W   = 4    # max digit width (e.g. "200")
 
 
 class SpiroSlider(Widget):
@@ -39,7 +42,6 @@ class SpiroSlider(Widget):
 
     def __init__(
         self,
-        emoji: str,
         label: str,
         mn: int,
         mx: int,
@@ -48,7 +50,6 @@ class SpiroSlider(Widget):
         slider_id: str = "",
     ) -> None:
         super().__init__(id=slider_id or None)
-        self.emoji     = emoji
         self.label     = label
         self.min_val   = mn
         self.max_val   = mx
@@ -59,22 +60,23 @@ class SpiroSlider(Widget):
     # ── Rendering ─────────────────────────────────────────────────────────────
 
     def render(self) -> Text:
-        r, g, b   = self._color
-        hex_color = f"#{r:02x}{g:02x}{b:02x}"
+        r, g, b = self._color
+        hx      = f"#{r:02x}{g:02x}{b:02x}"
 
-        # Track dimensions — use widget width minus label/value space
-        width      = self.size.width
-        label_len  = len(f"{self.emoji}  {self.label}  ") + len(str(self.max_val))
-        track_w    = max(8, width - label_len - 2)
-        ratio      = (self.value - self.min_val) / max(1, self.max_val - self.min_val)
-        filled     = max(0, min(track_w, int(ratio * track_w)))
-        empty      = track_w - filled
+        w       = self.size.width or 38
+        # layout:  LABEL(13) + " " + TRACK + "  " + VALUE(4)
+        track_w = max(4, w - _LABEL_W - 1 - 2 - _VAL_W)
+        ratio   = (self.value - self.min_val) / max(1, self.max_val - self.min_val)
+        filled  = max(0, min(track_w, int(ratio * track_w)))
+        empty   = track_w - filled
 
         text = Text(no_wrap=True, overflow="ellipsis")
-        text.append(f"{self.emoji}  {self.label}  ", style="bold white")
-        text.append("█" * filled,  style=f"bold {hex_color}")
-        text.append("░" * empty,   style="color(240)")
-        text.append(f"  {self.value:>4}", style=f"bold {hex_color}")
+        text.append(f"{self.label:<{_LABEL_W}}", style="bold white")
+        text.append(" ")
+        text.append("█" * filled, style=hx)
+        text.append("─" * empty,  style="color(238)")
+        text.append("  ")
+        text.append(f"{self.value:>{_VAL_W}}", style=f"bold {hx}")
         return text
 
     # ── Value helpers ─────────────────────────────────────────────────────────
@@ -96,12 +98,9 @@ class SpiroSlider(Widget):
 
     def on_mouse_down(self, event: events.MouseDown) -> None:
         self.focus()
-        width     = self.size.width
-        label_len = len(f"{self.emoji}  {self.label}  ") + len(str(self.max_val))
-        # track starts after the label portion (approx)
-        track_start = len(f"{self.emoji}  {self.label}  ")
-        track_w     = max(8, width - label_len - 2)
-        rel_x       = event.x - track_start
-        ratio       = max(0.0, min(1.0, rel_x / max(1, track_w)))
-        new_val     = int(self.min_val + ratio * (self.max_val - self.min_val))
-        self._set_value(new_val)
+        w         = self.size.width or 38
+        track_w   = max(4, w - _LABEL_W - 1 - 2 - _VAL_W)
+        track_x0  = _LABEL_W + 1   # where track begins
+        rel_x     = event.x - track_x0
+        ratio     = max(0.0, min(1.0, rel_x / max(1, track_w)))
+        self._set_value(int(self.min_val + ratio * (self.max_val - self.min_val)))
