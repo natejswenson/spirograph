@@ -1,5 +1,5 @@
 import math
-from utils import gcd
+from math import gcd
 
 
 class SpiroMath:
