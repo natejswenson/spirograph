@@ -1,0 +1,98 @@
+/* Spirograph Studio TUI — Textual stylesheet */
+
+Screen {
+    layout: horizontal;
+    background: #0f0c1c;
+}
+
+/* ── Control panel ─────────────────────────────────────────────── */
+
+#panel {
+    width: 40;
+    background: #16132a;
+    border-right: solid #34305c;
+    padding: 1 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#panel-title {
+    text-align: center;
+    color: #ebe8ff;
+    text-style: bold;
+    padding: 0 0 1 0;
+}
+
+/* ── Preview widget ────────────────────────────────────────────── */
+
+PreviewWidget {
+    height: auto;
+    align: center top;
+    padding: 0 0 1 0;
+}
+
+/* ── Slider ────────────────────────────────────────────────────── */
+
+SpiroSlider {
+    height: 1;
+    margin: 0 0 1 0;
+    padding: 0 1;
+}
+
+SpiroSlider:focus {
+    background: #1e1a38;
+}
+
+/* ── Color picker ──────────────────────────────────────────────── */
+
+ColorPicker {
+    height: 3;
+    margin: 1 0;
+    padding: 0 1;
+}
+
+ColorPicker:focus {
+    background: #1e1a38;
+}
+
+/* ── Buttons ───────────────────────────────────────────────────── */
+
+#btn-row {
+    layout: horizontal;
+    height: auto;
+    margin-top: 1;
+}
+
+#btn-row Button {
+    width: 1fr;
+    margin: 0 0 0 0;
+}
+
+Button#btn-draw  { background: #6366f1; color: white; }
+Button#btn-undo  { background: #d97706; color: white; }
+Button#btn-clear { background: #dc2626; color: white; }
+Button#btn-save  { background: #16a34a; color: white; }
+
+Button#btn-draw:hover  { background: #818cf8; }
+Button#btn-undo:hover  { background: #f59e0b; }
+Button#btn-clear:hover { background: #ef4444; }
+Button#btn-save:hover  { background: #22c55e; }
+
+/* ── Status bar ────────────────────────────────────────────────── */
+
+#status {
+    height: 1;
+    color: #8278af;
+    text-align: center;
+    padding: 0 1;
+    margin-top: 1;
+}
+
+/* ── Canvas area ───────────────────────────────────────────────── */
+
+CanvasWidget {
+    width: 1fr;
+    align: center middle;
+    padding: 1;
+    background: #08070f;
+}
