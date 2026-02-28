@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		049304D08E631874EB94AF6E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 25001F215BC749FC26E1B248 /* Assets.xcassets */; };
 		0C1211F1248539DBB333F932 /* MechanismPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65BE93D59A469A6B1095199D /* MechanismPreviewView.swift */; };
 		1C2D41E4BD63AD5E1BFA3DC3 /* ColorPickerCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F98924F47053904578D25F86 /* ColorPickerCard.swift */; };
 		1E18612F260B84BB09F804E9 /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = E55342CEC7E2F4C79998439F /* Layout.swift */; };
@@ -43,6 +44,7 @@
 
 /* Begin PBXFileReference section */
 		06F535EF8BDBDC2C94E25F4E /* StatusBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarView.swift; sourceTree = "<group>"; };
+		25001F215BC749FC26E1B248 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		25EDE08E2E04F8908E2EBAE5 /* SpirographStudioApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpirographStudioApp.swift; sourceTree = "<group>"; };
 		3B981F1B91B0C4BE9E9CCAC5 /* CanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasView.swift; sourceTree = "<group>"; };
 		4A2AD077AFF580EA6C3FA21F /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
@@ -150,6 +152,7 @@
 				FC41DB3D5283FD2BB488C26E /* Theme */,
 				627E1FC65A34762CDACD2941 /* Tutorial */,
 				3892FEFAE9C4CD17EE187501 /* Views */,
+				25001F215BC749FC26E1B248 /* Assets.xcassets */,
 				CF63AE3414FBF87D84E5CF6B /* ContentView.swift */,
 				25EDE08E2E04F8908E2EBAE5 /* SpirographStudioApp.swift */,
 			);
@@ -226,6 +229,7 @@
 			buildConfigurationList = 6477574FEF8D3856F09F14D2 /* Build configuration list for PBXNativeTarget "SpirographStudio" */;
 			buildPhases = (
 				3612C62F93948578CA5FE663 /* Sources */,
+				25DE304FC37BAC9B74C58441 /* Resources */,
 				0CAD64C6D5C19CFE34F9D95D /* Frameworks */,
 			);
 			buildRules = (
@@ -273,6 +277,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		25DE304FC37BAC9B74C58441 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				049304D08E631874EB94AF6E /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		3612C62F93948578CA5FE663 /* Sources */ = {
