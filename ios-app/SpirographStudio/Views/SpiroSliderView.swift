@@ -9,29 +9,24 @@ struct SpiroSliderView: View {
     let accentColor: Color
 
     var body: some View {
-        VStack(spacing: 4) {
-            // Label row
-            HStack {
-                Text(emoji)
-                    .font(.system(size: 14))
-                Text(label)
-                    .font(AppFonts.sliderLabel)
-                    .foregroundColor(.white.opacity(0.85))
-                Spacer()
-                Text("\(Int(value))")
-                    .font(AppFonts.sliderValue)
-                    .foregroundColor(accentColor)
-                    .frame(minWidth: 32, alignment: .trailing)
-            }
+        HStack(spacing: 8) {
+            Text(emoji)
+                .font(.system(size: 16))
+                .frame(width: 22)
 
-            // Custom slider track
             CustomSliderTrack(value: $value,
                               minValue: minValue,
                               maxValue: maxValue,
                               accentColor: accentColor)
+
+            Text("\(Int(value))")
+                .font(AppFonts.sliderValue)
+                .foregroundColor(accentColor)
+                .frame(width: 32, alignment: .trailing)
         }
-        .frame(height: 48)
-        .padding(.vertical, 2)
+        .frame(height: 22)
+        .padding(.vertical, 7)   // extends touch target to 36pt without changing layout
+        .contentShape(Rectangle())
     }
 }
 
@@ -57,7 +52,7 @@ struct CustomSliderTrack: View {
     var body: some View {
         GeometryReader { geo in
             let trackW = geo.size.width
-            let thumbSize: CGFloat = 22
+            let thumbSize: CGFloat = Layout.sliderThumbSize
             let frac = fraction(in: trackW)
             let thumbX = frac * (trackW - thumbSize) + thumbSize / 2
 
@@ -65,12 +60,12 @@ struct CustomSliderTrack: View {
                 // Background track
                 Capsule()
                     .fill(AppColors.sliderTrack)
-                    .frame(height: 6)
+                    .frame(height: Layout.sliderHeight)
 
                 // Filled portion
                 Capsule()
                     .fill(accentColor)
-                    .frame(width: max(thumbSize / 2, thumbX), height: 6)
+                    .frame(width: max(thumbSize / 2, thumbX), height: Layout.sliderHeight)
 
                 // Thumb
                 Circle()
@@ -96,6 +91,6 @@ struct CustomSliderTrack: View {
                     }
             )
         }
-        .frame(height: 22)
+        .frame(height: Layout.sliderThumbSize)
     }
 }

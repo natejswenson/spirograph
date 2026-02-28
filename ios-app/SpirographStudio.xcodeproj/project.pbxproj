@@ -13,6 +13,7 @@
 		2AFA5BA7C9109543F14547F4 /* SpiroPreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFF942FDE11D50EBD674EDF7 /* SpiroPreset.swift */; };
 		33E3163847665A8C9B164561 /* TitleBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1A62245E1BDCC287707202 /* TitleBarView.swift */; };
 		3E05105110D9625F6354C140 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A2AD077AFF580EA6C3FA21F /* Photos.framework */; };
+		559FBA6F63CBE481F310E9B6 /* ControlsPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAE910A5135651585A41B055 /* ControlsPanelView.swift */; };
 		63AB6230730E8633B4AF9AFB /* SpiroMathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D2B6C4B753A3A1B2D2EB5F /* SpiroMathTests.swift */; };
 		675BE61875B4BBFC2328341F /* AppColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50E70C21B79B22AE9EB6516 /* AppColors.swift */; };
 		7BD42BE69A636D7366BBC13A /* DrawingEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4E6EFDA2DE0A86097606C2 /* DrawingEngine.swift */; };
@@ -54,6 +55,7 @@
 		AA1A62245E1BDCC287707202 /* TitleBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleBarView.swift; sourceTree = "<group>"; };
 		AC4D86405F8CC722D8475341 /* SpirographStudioTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = SpirographStudioTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B19699D007810C46F022C0A2 /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
+		BAE910A5135651585A41B055 /* ControlsPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlsPanelView.swift; sourceTree = "<group>"; };
 		CF63AE3414FBF87D84E5CF6B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		D3A193F2BBBE68501FE315F0 /* TutorialOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialOverlayView.swift; sourceTree = "<group>"; };
 		DA43848D0C5F8F318FC164D1 /* ButtonsCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonsCard.swift; sourceTree = "<group>"; };
@@ -110,6 +112,7 @@
 				DA43848D0C5F8F318FC164D1 /* ButtonsCard.swift */,
 				3B981F1B91B0C4BE9E9CCAC5 /* CanvasView.swift */,
 				F98924F47053904578D25F86 /* ColorPickerCard.swift */,
+				BAE910A5135651585A41B055 /* ControlsPanelView.swift */,
 				65BE93D59A469A6B1095199D /* MechanismPreviewView.swift */,
 				8AA4A4841FD55B099377200F /* SlidersCard.swift */,
 				95595FBAE286F7CE5772285C /* SpiroSliderView.swift */,
@@ -283,6 +286,7 @@
 				D67A2A4703CB2F993C051B58 /* ColorMode.swift in Sources */,
 				1C2D41E4BD63AD5E1BFA3DC3 /* ColorPickerCard.swift in Sources */,
 				F5683640A6DDB937CB3CF367 /* ContentView.swift in Sources */,
+				559FBA6F63CBE481F310E9B6 /* ControlsPanelView.swift in Sources */,
 				7BD42BE69A636D7366BBC13A /* DrawingEngine.swift in Sources */,
 				1E18612F260B84BB09F804E9 /* Layout.swift in Sources */,
 				0C1211F1248539DBB333F932 /* MechanismPreviewView.swift in Sources */,

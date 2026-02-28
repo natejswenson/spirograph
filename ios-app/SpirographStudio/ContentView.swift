@@ -60,73 +60,51 @@ struct ContentView: View {
         ZStack {
             AppColors.background.ignoresSafeArea()
 
-            VStack(spacing: 0) {
-                TitleBarView(isDrawing: engine.isDrawing)
+            GeometryReader { geo in
+                let availH = geo.size.height
+                let availW = geo.size.width
+                let canvasSz = min(availW, availH - 44 - Layout.controlsPanelHeight)
 
-                // Canvas (full width, square)
-                CanvasView(engine: engine,
-                           showToast: $showToast,
-                           toastMessage: $toastMessage)
+                VStack(spacing: 0) {
+                    TitleBarView(isDrawing: engine.isDrawing, layerCount: engine.layerCount)
+                        .frame(height: 44)
 
-                // Scrollable controls
-                ScrollView(.vertical, showsIndicators: false) {
-                    VStack(spacing: Layout.sectionGap) {
-                        // Mechanism preview card
-                        VStack(alignment: .leading, spacing: 0) {
-                            Text("PREVIEW")
-                                .font(AppFonts.sectionHeader)
-                                .foregroundColor(AppColors.statusText)
-                                .padding(.bottom, 6)
-                                .padding(.horizontal, Layout.cardPadding)
-                                .padding(.top, Layout.cardPadding)
+                    // Canvas area — fills remaining space between title and controls
+                    ZStack {
+                        AppColors.background
 
-                            MechanismPreviewView(
-                                R: sliderR,
-                                r: effectiver,
-                                d: sliderd,
-                                isDrawing: engine.isDrawing,
-                                selectedColor: isRainbow ? .white : currentSwatchColor
-                            )
-                            .frame(height: 130)
-                            .padding(.horizontal, Layout.cardPadding)
-                            .padding(.bottom, Layout.cardPadding)
-                        }
-                        .background(AppColors.panel)
-                        .clipShape(RoundedRectangle(cornerRadius: Layout.cardRadius))
-
-                        // Sliders card
-                        SlidersCard(
-                            sliderR: $sliderR,
-                            sliderr: $sliderr,
-                            sliderd: $sliderd,
-                            sliderSpeed: $sliderSpeed,
-                            sliderWidth: $sliderWidth
-                        )
-
-                        // Color picker card
-                        ColorPickerCard(
-                            selectedColorIndex: $selectedColorIndex,
-                            isRainbow: $isRainbow
-                        )
-
-                        // Buttons card
-                        ButtonsCard(
+                        CanvasView(
                             engine: engine,
-                            onDraw:   handleDraw,
-                            onUndo:   handleUndo,
-                            onClear:  handleClear,
-                            onRandom: handleRandom,
-                            onSave:   handleSave
+                            showToast: $showToast,
+                            toastMessage: $toastMessage,
+                            R: sliderR,
+                            r: effectiver,
+                            d: sliderd,
+                            isRainbow: isRainbow,
+                            selectedColor: currentSwatchColor
                         )
-
-                        // Status bar
-                        StatusBarView(engine: engine,
-                                      R: sliderR, r: effectiver, d: sliderd,
-                                      showSaved: showSaved)
-                            .padding(.bottom, 12)
+                        .frame(width: canvasSz, height: canvasSz)
                     }
-                    .padding(.horizontal, 12)
-                    .padding(.top, 10)
+                    .frame(width: availW,
+                           height: availH - 44 - Layout.controlsPanelHeight)
+
+                    // Controls panel — fixed height, no scroll
+                    ControlsPanelView(
+                        sliderR: $sliderR,
+                        sliderr: $sliderr,
+                        sliderd: $sliderd,
+                        sliderSpeed: $sliderSpeed,
+                        sliderWidth: $sliderWidth,
+                        selectedColorIndex: $selectedColorIndex,
+                        isRainbow: $isRainbow,
+                        engine: engine,
+                        onDraw:   handleDraw,
+                        onUndo:   handleUndo,
+                        onClear:  handleClear,
+                        onRandom: handleRandom,
+                        onSave:   handleSave
+                    )
+                    .frame(height: Layout.controlsPanelHeight)
                 }
             }
 
@@ -220,7 +198,6 @@ struct ContentView: View {
         gen.prepare()
         gen.impactOccurred()
 
-        // Save to Photos
         PHPhotoLibrary.requestAuthorization(for: .addOnly) { status in
             DispatchQueue.main.async {
                 if status == .authorized || status == .limited {
@@ -229,8 +206,6 @@ struct ContentView: View {
                 } else if status == .denied || status == .restricted {
                     showPermissionAlert = true
                 }
-
-                // Always show share sheet
                 presentShareSheet(image: image)
             }
         }

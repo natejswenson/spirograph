@@ -2,6 +2,7 @@ import SwiftUI
 
 struct TitleBarView: View {
     let isDrawing: Bool
+    let layerCount: Int
 
     @State private var pulseScale: CGFloat = 1.0
 
@@ -28,7 +29,34 @@ struct TitleBarView: View {
                 .foregroundColor(AppColors.title)
 
             Spacer()
+
+            // Layer count badge
+            if isDrawing {
+                Text("Drawing…")
+                    .font(AppFonts.status)
+                    .foregroundColor(AppColors.dotDrawing)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(AppColors.dotDrawing.opacity(0.15))
+                    .clipShape(Capsule())
+                    .transition(.opacity.combined(with: .scale(scale: 0.85)))
+            } else if layerCount > 0 {
+                HStack(spacing: 3) {
+                    Text("✦")
+                        .font(.system(size: 10))
+                    Text("\(layerCount)")
+                        .font(AppFonts.status)
+                }
+                .foregroundColor(AppColors.dotDrawing)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 3)
+                .background(AppColors.dotDrawing.opacity(0.15))
+                .clipShape(Capsule())
+                .transition(.opacity.combined(with: .scale(scale: 0.85)))
+            }
         }
+        .animation(.easeInOut(duration: 0.3), value: isDrawing)
+        .animation(.easeInOut(duration: 0.3), value: layerCount)
         .padding(.horizontal, 16)
         .frame(height: 44)
         .background(AppColors.panel)

@@ -13,67 +13,61 @@ struct ButtonsCard: View {
             let pct = Int(engine.drawProgress * 100)
             return "⏹  \(pct)%"
         }
-        return "▶  Draw"
+        return "▶  D R A W"
     }
 
     var body: some View {
-        VStack(spacing: 8) {
-            // Draw (full width)
+        VStack(spacing: 6) {
+            // Draw (full width, 42pt)
             Button(action: onDraw) {
                 Text(drawLabel)
                     .font(AppFonts.button)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
-                    .frame(height: 44)
+                    .frame(height: 42)
             }
             .buttonStyle(SpiroButtonStyle(color: AppColors.btnDraw.opacity(engine.isDrawing ? 0.75 : 1.0)))
 
-            // Undo + Clear row
-            HStack(spacing: 8) {
+            // 4 equal action buttons (36pt)
+            HStack(spacing: 6) {
                 Button(action: onUndo) {
-                    Text("↩  Undo")
+                    Text("↩ Undo")
                         .font(AppFonts.button)
                         .foregroundColor(engine.canUndo ? .white : .white.opacity(0.5))
                         .frame(maxWidth: .infinity)
-                        .frame(height: 44)
+                        .frame(height: 36)
                 }
                 .buttonStyle(SpiroButtonStyle(color: AppColors.btnUndo.opacity(engine.canUndo ? 1.0 : 0.4)))
                 .disabled(!engine.canUndo)
 
                 Button(action: onClear) {
-                    Text("✕  Clear")
+                    Text("✕ Clear")
                         .font(AppFonts.button)
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
-                        .frame(height: 44)
+                        .frame(height: 36)
                 }
                 .buttonStyle(SpiroButtonStyle(color: AppColors.btnClear))
-            }
 
-            // Random + Save row
-            HStack(spacing: 8) {
                 Button(action: onRandom) {
-                    Text("🎲  Random")
-                        .font(AppFonts.button)
-                        .foregroundColor(.white)
+                    Text("🎲")
+                        .font(.system(size: 18))
                         .frame(maxWidth: .infinity)
-                        .frame(height: 44)
+                        .frame(height: 36)
                 }
                 .buttonStyle(SpiroButtonStyle(color: AppColors.btnRandom))
 
                 Button(action: onSave) {
-                    Text("💾  Save")
-                        .font(AppFonts.button)
-                        .foregroundColor(.white)
+                    Text("💾")
+                        .font(.system(size: 18))
                         .frame(maxWidth: .infinity)
-                        .frame(height: 44)
+                        .frame(height: 36)
                 }
                 .buttonStyle(SpiroButtonStyle(color: AppColors.btnSave))
             }
         }
-        .padding(Layout.cardPadding)
-        .background(AppColors.panel)
-        .clipShape(RoundedRectangle(cornerRadius: Layout.cardRadius))
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
     }
 }
 
