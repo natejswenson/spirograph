@@ -145,6 +145,6 @@ struct MechanismPreviewView: View {
             if i == 0 { path.move(to: sp) } else { path.addLine(to: sp) }
         }
         path.closeSubpath()
-        context.stroke(path, with: .color(color.opacity(0.1)), lineWidth: 1)
+        context.stroke(path, with: .color(color.opacity(0.18)), lineWidth: 1.5)
     }
 }

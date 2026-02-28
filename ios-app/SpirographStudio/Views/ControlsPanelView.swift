@@ -33,9 +33,7 @@ struct ControlsPanelView: View {
                 sliderWidth: $sliderWidth
             )
 
-            // Divider — 1pt
-            Divider()
-                .background(AppColors.cardBorder)
+            sectionDivider
 
             // Color row — 38pt
             ColorPickerCard(
@@ -43,9 +41,7 @@ struct ControlsPanelView: View {
                 isRainbow: $isRainbow
             )
 
-            // Divider — 1pt
-            Divider()
-                .background(AppColors.cardBorder)
+            sectionDivider
 
             // Buttons section — 96pt
             ButtonsCard(
@@ -75,10 +71,17 @@ struct ControlsPanelView: View {
     }
 
     private var pullIndicator: some View {
-        RoundedRectangle(cornerRadius: 2.5)
-            .fill(Color.white.opacity(0.25))
-            .frame(width: 36, height: 5)
+        RoundedRectangle(cornerRadius: 3)
+            .fill(Color.white.opacity(0.30))
+            .frame(width: 42, height: 5)
             .frame(maxWidth: .infinity)
             .frame(height: 16)
+    }
+
+    private var sectionDivider: some View {
+        LinearGradient(
+            colors: [.clear, AppColors.glassBorder, AppColors.glassBorder, .clear],
+            startPoint: .leading, endPoint: .trailing)
+            .frame(height: 1)
     }
 }

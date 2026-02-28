@@ -13,7 +13,7 @@ struct SpiroSliderView: View {
             // Icon pill: colored circle with SF Symbol
             ZStack {
                 Circle()
-                    .fill(accentColor.opacity(0.18))
+                    .fill(accentColor.opacity(0.22))
                     .frame(width: 26, height: 26)
                 Image(systemName: sfSymbol)
                     .font(.system(size: 11, weight: .semibold))
@@ -29,6 +29,10 @@ struct SpiroSliderView: View {
                 .font(AppFonts.sliderValue)
                 .foregroundColor(accentColor)
                 .frame(width: 32, alignment: .trailing)
+                .padding(.horizontal, 5)
+                .padding(.vertical, 2)
+                .background(accentColor.opacity(0.10))
+                .clipShape(RoundedRectangle(cornerRadius: 6))
         }
         .frame(height: 22)
         .padding(.vertical, 7)   // extends touch target to 36pt without changing layout

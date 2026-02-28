@@ -7,10 +7,19 @@ struct ToastView: View {
         Text(message)
             .font(AppFonts.toast)
             .foregroundColor(.white)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
-            .background(Color.black.opacity(0.75))
-            .clipShape(Capsule())
+            .padding(.horizontal, 18)
+            .padding(.vertical, 9)
+            .background {
+                ZStack {
+                    Capsule().fill(.ultraThinMaterial)
+                    Capsule().fill(Color.white.opacity(0.08))
+                }
+            }
+            .overlay {
+                Capsule()
+                    .stroke(AppColors.glassBorder, lineWidth: 1)
+            }
+            .shadow(color: .black.opacity(0.4), radius: 12, y: 4)
     }
 }
 

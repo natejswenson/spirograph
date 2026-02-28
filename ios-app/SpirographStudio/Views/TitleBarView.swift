@@ -24,9 +24,12 @@ struct TitleBarView: View {
                     }
                 }
 
-            Text("Spirograph Studio ✦")
+            Text("Spirograph Studio")
                 .font(AppFonts.title)
-                .foregroundColor(AppColors.title)
+                .foregroundStyle(LinearGradient(
+                    colors: [Color(red: 0.72, green: 0.78, blue: 1.0),
+                             Color(red: 0.85, green: 0.60, blue: 1.0)],
+                    startPoint: .leading, endPoint: .trailing))
 
             Spacer()
 

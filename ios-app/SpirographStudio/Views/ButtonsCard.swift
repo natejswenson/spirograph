@@ -23,26 +23,40 @@ struct ButtonsCard: View {
 
     var body: some View {
         VStack(spacing: 6) {
-            // Draw (full width, 42pt) — gradient background
+            // Draw (full width, 42pt) — gradient with animated progress bar
             Button(action: onDraw) {
-                HStack(spacing: 6) {
-                    Image(systemName: engine.isDrawing ? "stop.fill" : "play.fill")
-                        .font(.system(size: 13, weight: .semibold))
+                ZStack(alignment: .bottom) {
+                    // Gradient background
+                    drawGradient
+
+                    // Animated progress bar strip
                     if engine.isDrawing {
-                        let pct = Int(engine.drawProgress * 100)
-                        Text("\(pct)%")
-                            .font(AppFonts.button)
-                    } else {
-                        Text("D R A W")
+                        GeometryReader { geo in
+                            Capsule()
+                                .fill(Color.white.opacity(0.35))
+                                .frame(
+                                    width: max(8, geo.size.width * CGFloat(engine.drawProgress)),
+                                    height: 3)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .animation(.linear(duration: 0.06), value: engine.drawProgress)
+                        }
+                        .frame(height: 3)
+                        .padding(.horizontal, 10)
+                        .padding(.bottom, 5)
+                    }
+
+                    // Label
+                    HStack(spacing: 7) {
+                        Image(systemName: engine.isDrawing ? "stop.fill" : "play.fill")
+                            .font(.system(size: 13, weight: .semibold))
+                        Text(engine.isDrawing ? "\(Int(engine.drawProgress * 100))%" : "Draw")
                             .font(AppFonts.button)
                     }
+                    .foregroundColor(.white)
                 }
-                .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
                 .frame(height: 42)
-                .background(drawGradient)
                 .clipShape(RoundedRectangle(cornerRadius: Layout.buttonRadius))
-                .scaleEffect(1.0)
             }
             .buttonStyle(GradientDrawButtonStyle())
 
@@ -100,7 +114,7 @@ private struct GlassButtonLabel: View {
 struct GradientDrawButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
+            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
             .animation(.easeOut(duration: 0.1), value: configuration.isPressed)
     }
 }
@@ -122,7 +136,7 @@ struct GlassButtonStyle: ButtonStyle {
                 RoundedRectangle(cornerRadius: Layout.buttonRadius)
                     .stroke(AppColors.glassBorder, lineWidth: 1)
             }
-            .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
+            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
             .animation(.easeOut(duration: 0.1), value: configuration.isPressed)
     }
 }
@@ -135,7 +149,7 @@ struct SpiroButtonStyle: ButtonStyle {
         configuration.label
             .background(color.opacity(configuration.isPressed ? 0.75 : 1.0))
             .clipShape(RoundedRectangle(cornerRadius: Layout.buttonRadius))
-            .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
+            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
             .animation(.easeOut(duration: 0.1), value: configuration.isPressed)
     }
 }

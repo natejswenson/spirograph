@@ -14,24 +14,21 @@ struct CanvasView: View {
 
     var body: some View {
         ZStack {
-            // Canvas image
+            // Canvas image — rounded corners
             Image(uiImage: engine.canvasImage)
                 .resizable()
                 .interpolation(.none)
                 .aspectRatio(1, contentMode: .fit)
+                .clipShape(RoundedRectangle(cornerRadius: Layout.canvasCornerRadius, style: .continuous))
 
-            // Aura glow overlay (border glow)
-            Rectangle()
-                .fill(Color.clear)
-                .overlay {
-                    RoundedRectangle(cornerRadius: 0)
-                        .stroke(
-                            engine.isDrawing ? AppColors.canvasAuraDrawing : AppColors.canvasAuraIdle,
-                            lineWidth: 4
-                        )
-                        .blur(radius: 12)
-                }
-                .animation(.easeInOut(duration: 0.4), value: engine.isDrawing)
+            // Aura glow overlay — matches canvas corner radius
+            RoundedRectangle(cornerRadius: Layout.canvasCornerRadius, style: .continuous)
+                .stroke(
+                    engine.isDrawing ? AppColors.canvasAuraDrawing : AppColors.canvasAuraIdle,
+                    lineWidth: engine.isDrawing ? 6 : 3
+                )
+                .blur(radius: engine.isDrawing ? 14 : 8)
+                .animation(.easeInOut(duration: 0.5), value: engine.isDrawing)
 
             // Floating mechanism preview — top-right corner
             VStack {
@@ -46,7 +43,12 @@ struct CanvasView: View {
                     )
                     .frame(width: Layout.floatingPreviewSize, height: Layout.floatingPreviewSize)
                     .background(.ultraThinMaterial)
-                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            .stroke(AppColors.glassBorder, lineWidth: 1)
+                    }
+                    .shadow(color: .black.opacity(0.35), radius: 8, y: 2)
                     .padding(8)
                 }
                 Spacer()
