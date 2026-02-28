@@ -23,39 +23,35 @@ struct ButtonsCard: View {
 
     var body: some View {
         VStack(spacing: 6) {
-            // Draw (full width, 42pt) — gradient with animated progress bar
+            // Draw (full width, 42pt) — centered label + progress bar at bottom
             Button(action: onDraw) {
-                ZStack(alignment: .bottom) {
-                    // Gradient background
-                    drawGradient
-
-                    // Animated progress bar strip
-                    if engine.isDrawing {
-                        GeometryReader { geo in
-                            Capsule()
-                                .fill(Color.white.opacity(0.35))
-                                .frame(
-                                    width: max(8, geo.size.width * CGFloat(engine.drawProgress)),
-                                    height: 3)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .animation(.linear(duration: 0.06), value: engine.drawProgress)
-                        }
-                        .frame(height: 3)
-                        .padding(.horizontal, 10)
-                        .padding(.bottom, 5)
-                    }
-
-                    // Label
-                    HStack(spacing: 7) {
-                        Image(systemName: engine.isDrawing ? "stop.fill" : "play.fill")
-                            .font(.system(size: 13, weight: .semibold))
-                        Text(engine.isDrawing ? "\(Int(engine.drawProgress * 100))%" : "Draw")
-                            .font(AppFonts.button)
-                    }
-                    .foregroundColor(.white)
+                HStack(spacing: 7) {
+                    Image(systemName: engine.isDrawing ? "stop.fill" : "play.fill")
+                        .font(.system(size: 13, weight: .semibold))
+                    Text(engine.isDrawing
+                         ? (engine.drawProgress > 0 ? "\(Int(engine.drawProgress * 100))%" : "Drawing…")
+                         : "Draw")
+                        .font(AppFonts.button)
                 }
+                .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
                 .frame(height: 42)
+                .background(drawGradient)
+                .overlay(alignment: .bottom) {
+                    if engine.isDrawing {
+                        Capsule()
+                            .fill(LinearGradient(
+                                colors: [Color.white.opacity(0.25), Color.white.opacity(0.45)],
+                                startPoint: .leading, endPoint: .trailing))
+                            .frame(height: 3)
+                            .scaleEffect(
+                                x: CGFloat(max(0.02, engine.drawProgress)),
+                                y: 1, anchor: .leading)
+                            .animation(.linear(duration: 0.08), value: engine.drawProgress)
+                            .padding(.horizontal, 10)
+                            .padding(.bottom, 6)
+                    }
+                }
                 .clipShape(RoundedRectangle(cornerRadius: Layout.buttonRadius))
             }
             .buttonStyle(GradientDrawButtonStyle())
@@ -64,10 +60,10 @@ struct ButtonsCard: View {
             HStack(spacing: 6) {
                 Button(action: onUndo) {
                     GlassButtonLabel(symbol: "arrow.uturn.backward", text: "Undo")
-                        .foregroundStyle(engine.canUndo ? .white : .white.opacity(0.3))
                 }
                 .buttonStyle(GlassButtonStyle())
                 .disabled(!engine.canUndo)
+                .opacity(engine.canUndo ? 1.0 : 0.35)
 
                 Button(action: onClear) {
                     GlassButtonLabel(symbol: "trash.fill", text: "Clear")

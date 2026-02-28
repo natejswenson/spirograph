@@ -29,10 +29,6 @@ struct SpiroSliderView: View {
                 .font(AppFonts.sliderValue)
                 .foregroundColor(accentColor)
                 .frame(width: 32, alignment: .trailing)
-                .padding(.horizontal, 5)
-                .padding(.vertical, 2)
-                .background(accentColor.opacity(0.10))
-                .clipShape(RoundedRectangle(cornerRadius: 6))
         }
         .frame(height: 22)
         .padding(.vertical, 7)   // extends touch target to 36pt without changing layout
