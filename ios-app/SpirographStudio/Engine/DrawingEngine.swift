@@ -19,9 +19,13 @@ final class DrawingEngine: ObservableObject {
     private var drawPoints: [CGPoint] = []
     private var drawIndex: Int = 0
     private var drawTimer: Timer?
+    private var pendingR: Double = 150
+    private var pendingr: Double = 80
+    private var pendingd: Double = 100
     private var pendingColorMode: ColorMode = .solid(UIColor.white)
     private var pendingLineWidth: Double = 1
     private var pendingSpeed: Int = 5
+    private var userStopped: Bool = false
 
     let canvasSize: CGFloat
 
@@ -90,6 +94,7 @@ final class DrawingEngine: ObservableObject {
             return
         }
 
+        userStopped = false
         pushUndo()
 
         let rawPoints = SpiroMath.computePoints(R: R, r: r, d: d)
@@ -99,6 +104,9 @@ final class DrawingEngine: ObservableObject {
         drawProgress = 0
         layerCount += 1
 
+        pendingR = R
+        pendingr = r
+        pendingd = d
         pendingColorMode = colorMode
         pendingLineWidth = lineWidth
         pendingSpeed = max(1, speed)
@@ -161,13 +169,17 @@ final class DrawingEngine: ObservableObject {
         gen.prepare()
         gen.impactOccurred()
 
-        // Reset progress after short delay for UX smoothness
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-            self?.drawProgress = 0
+        // Auto-start next layer with same parameters (unless user manually stopped)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
+            guard let self, !self.userStopped else { return }
+            self.startDrawing(R: self.pendingR, r: self.pendingr, d: self.pendingd,
+                              speed: self.pendingSpeed, lineWidth: self.pendingLineWidth,
+                              colorMode: self.pendingColorMode)
         }
     }
 
     func stopDrawing() {
+        userStopped = true
         drawTimer?.invalidate()
         drawTimer = nil
         isDrawing = false
