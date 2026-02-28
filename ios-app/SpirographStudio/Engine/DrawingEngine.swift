@@ -25,7 +25,6 @@ final class DrawingEngine: ObservableObject {
     private var pendingColorMode: ColorMode = .solid(UIColor.white)
     private var pendingLineWidth: Double = 1
     private var pendingSpeed: Int = 5
-    private var userStopped: Bool = false
 
     let canvasSize: CGFloat
 
@@ -94,7 +93,6 @@ final class DrawingEngine: ObservableObject {
             return
         }
 
-        userStopped = false
         pushUndo()
 
         let rawPoints = SpiroMath.computePoints(R: R, r: r, d: d)
@@ -125,7 +123,7 @@ final class DrawingEngine: ObservableObject {
             return
         }
 
-        let end = min(drawIndex + pendingSpeed, drawPoints.count - 1)
+        let end = min(drawIndex + pendingSpeed, drawPoints.count)
         let total = drawPoints.count
 
         UIGraphicsBeginImageContextWithOptions(
@@ -141,7 +139,7 @@ final class DrawingEngine: ObservableObject {
         ctx.setLineCap(.round)
         ctx.setLineJoin(.round)
 
-        for i in drawIndex..<end {
+        for i in drawIndex..<end where i < drawPoints.count {
             let color = pendingColorMode.resolvedColor(index: i, total: total)
             ctx.setStrokeColor(color.cgColor)
             ctx.move(to: drawPoints[i - 1])
@@ -162,24 +160,15 @@ final class DrawingEngine: ObservableObject {
         drawTimer?.invalidate()
         drawTimer = nil
         isDrawing = false
-        drawProgress = 1.0
+        drawProgress = 0.0
 
         // Light haptic on natural completion
         let gen = UIImpactFeedbackGenerator(style: .light)
         gen.prepare()
         gen.impactOccurred()
-
-        // Auto-start next layer with same parameters (unless user manually stopped)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
-            guard let self, !self.userStopped else { return }
-            self.startDrawing(R: self.pendingR, r: self.pendingr, d: self.pendingd,
-                              speed: self.pendingSpeed, lineWidth: self.pendingLineWidth,
-                              colorMode: self.pendingColorMode)
-        }
     }
 
     func stopDrawing() {
-        userStopped = true
         drawTimer?.invalidate()
         drawTimer = nil
         isDrawing = false
