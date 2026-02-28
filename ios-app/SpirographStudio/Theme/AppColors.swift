@@ -56,6 +56,10 @@ enum AppColors {
     static let btnSave   = Color(red: 0.086, green: 0.639, blue: 0.290)
     static let btnRandom = Color(red: 0.400, green: 0.200, blue: 0.800)
 
+    // Glassmorphism surfaces
+    static let glassBorder    = Color.white.opacity(0.12)
+    static let glassHighlight = Color.white.opacity(0.06)
+
     // Title bar pulsing dot
     static let dotDrawing = Color(red: 0.388, green: 0.400, blue: 0.945)
     static let dotIdle    = Color(red: 0.294, green: 0.247, blue: 0.541)

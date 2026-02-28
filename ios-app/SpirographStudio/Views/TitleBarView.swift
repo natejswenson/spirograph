@@ -32,18 +32,22 @@ struct TitleBarView: View {
 
             // Layer count badge
             if isDrawing {
-                Text("Drawing…")
-                    .font(AppFonts.status)
-                    .foregroundColor(AppColors.dotDrawing)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 3)
-                    .background(AppColors.dotDrawing.opacity(0.15))
-                    .clipShape(Capsule())
-                    .transition(.opacity.combined(with: .scale(scale: 0.85)))
+                HStack(spacing: 4) {
+                    Image(systemName: "rays")
+                        .font(.system(size: 10, weight: .semibold))
+                    Text("Drawing…")
+                        .font(AppFonts.status)
+                }
+                .foregroundColor(AppColors.dotDrawing)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 3)
+                .background(AppColors.dotDrawing.opacity(0.15))
+                .clipShape(Capsule())
+                .transition(.opacity.combined(with: .scale(scale: 0.85)))
             } else if layerCount > 0 {
-                HStack(spacing: 3) {
-                    Text("✦")
-                        .font(.system(size: 10))
+                HStack(spacing: 4) {
+                    Image(systemName: "square.stack.fill")
+                        .font(.system(size: 10, weight: .semibold))
                     Text("\(layerCount)")
                         .font(AppFonts.status)
                 }
@@ -59,10 +63,10 @@ struct TitleBarView: View {
         .animation(.easeInOut(duration: 0.3), value: layerCount)
         .padding(.horizontal, 16)
         .frame(height: 44)
-        .background(AppColors.panel)
+        .background(.ultraThinMaterial)
         .overlay(alignment: .bottom) {
             Rectangle()
-                .fill(AppColors.cardBorder)
+                .fill(AppColors.glassBorder)
                 .frame(height: 1)
         }
     }

@@ -4,7 +4,8 @@ enum Layout {
     static let cardRadius: CGFloat          = 16
     static let buttonRadius: CGFloat        = 12
     static let swatchRadius: CGFloat        = 8
-    static let swatchSize: CGFloat          = 28   // was 32
+    static let swatchSize: CGFloat          = 26   // circular swatches
+    static let panelRadius: CGFloat         = 24   // panel corners
     static let swatchGap: CGFloat           = 8
     static let cardPadding: CGFloat         = 14
     static let sectionGap: CGFloat          = 10

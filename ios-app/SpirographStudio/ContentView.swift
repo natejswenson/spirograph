@@ -58,7 +58,19 @@ struct ContentView: View {
 
     var body: some View {
         ZStack {
-            AppColors.background.ignoresSafeArea()
+            // Multi-layered radial gradient background for frosted-glass effect
+            ZStack {
+                Color(red: 0.04, green: 0.04, blue: 0.10)
+                RadialGradient(
+                    colors: [Color(red: 0.25, green: 0.15, blue: 0.45).opacity(0.35), .clear],
+                    center: UnitPoint(x: 0.5, y: 0.25),
+                    startRadius: 0, endRadius: 320)
+                RadialGradient(
+                    colors: [Color(red: 0.10, green: 0.20, blue: 0.55).opacity(0.25), .clear],
+                    center: UnitPoint(x: 0.5, y: 0.9),
+                    startRadius: 0, endRadius: 240)
+            }
+            .ignoresSafeArea()
 
             GeometryReader { geo in
                 let availH = geo.size.height
@@ -71,7 +83,7 @@ struct ContentView: View {
 
                     // Canvas area — fills remaining space between title and controls
                     ZStack {
-                        AppColors.background
+                        Color.clear
 
                         CanvasView(
                             engine: engine,

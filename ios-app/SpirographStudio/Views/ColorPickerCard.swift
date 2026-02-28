@@ -9,12 +9,16 @@ struct ColorPickerCard: View {
             ForEach(0..<AppColors.presets.count, id: \.self) { index in
                 let isSelected = selectedColorIndex == index
 
-                RoundedRectangle(cornerRadius: Layout.swatchRadius)
+                Circle()
                     .fill(AppColors.presets[index])
                     .frame(width: Layout.swatchSize, height: Layout.swatchSize)
+                    .shadow(color: isSelected
+                            ? AppColors.presets[index].opacity(0.7)
+                            : .clear,
+                            radius: 8)
                     .overlay {
                         if isSelected {
-                            RoundedRectangle(cornerRadius: Layout.swatchRadius)
+                            Circle()
                                 .stroke(Color.white, lineWidth: 2)
                         }
                     }
@@ -33,28 +37,30 @@ struct ColorPickerCard: View {
 
             Spacer()
 
-            // Rainbow toggle inline
+            // Rainbow toggle inline — circle pill with SF Symbol
             Button {
                 isRainbow.toggle()
                 let gen = UISelectionFeedbackGenerator()
                 gen.prepare()
                 gen.selectionChanged()
             } label: {
-                Text("🌈")
-                    .font(.system(size: 20))
-                    .frame(width: Layout.swatchSize, height: Layout.swatchSize)
-                    .background(isRainbow
-                        ? Color(red: 0.388, green: 0.400, blue: 0.945).opacity(0.6)
-                        : Color(white: 0.18))
-                    .clipShape(RoundedRectangle(cornerRadius: Layout.swatchRadius))
-                    .overlay {
-                        if isRainbow {
-                            RoundedRectangle(cornerRadius: Layout.swatchRadius)
-                                .stroke(Color.white, lineWidth: 2)
+                ZStack {
+                    Circle()
+                        .fill(isRainbow
+                              ? Color(red: 0.388, green: 0.400, blue: 0.945).opacity(0.6)
+                              : Color(white: 0.18))
+                        .frame(width: Layout.swatchSize, height: Layout.swatchSize)
+                        .overlay {
+                            if isRainbow {
+                                Circle().stroke(Color.white, lineWidth: 2)
+                            }
                         }
-                    }
-                    .scaleEffect(isRainbow ? 1.1 : 1.0)
-                    .animation(.spring(response: 0.25), value: isRainbow)
+                    Image(systemName: "wand.and.sparkles")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(.white)
+                }
+                .scaleEffect(isRainbow ? 1.1 : 1.0)
+                .animation(.spring(response: 0.25), value: isRainbow)
             }
             .buttonStyle(.plain)
         }

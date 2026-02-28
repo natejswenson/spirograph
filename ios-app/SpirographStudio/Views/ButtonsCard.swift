@@ -8,62 +8,67 @@ struct ButtonsCard: View {
     let onRandom: () -> Void
     let onSave: () -> Void
 
-    var drawLabel: String {
+    var drawGradient: LinearGradient {
         if engine.isDrawing {
-            let pct = Int(engine.drawProgress * 100)
-            return "⏹  \(pct)%"
+            return LinearGradient(
+                colors: [Color(red: 0.55, green: 0.2, blue: 0.85),
+                         Color(red: 0.4,  green: 0.15, blue: 0.7)],
+                startPoint: .leading, endPoint: .trailing)
         }
-        return "▶  D R A W"
+        return LinearGradient(
+            colors: [Color(red: 0.35, green: 0.4,  blue: 0.95),
+                     Color(red: 0.55, green: 0.25, blue: 0.9)],
+            startPoint: .leading, endPoint: .trailing)
     }
 
     var body: some View {
         VStack(spacing: 6) {
-            // Draw (full width, 42pt)
+            // Draw (full width, 42pt) — gradient background
             Button(action: onDraw) {
-                Text(drawLabel)
-                    .font(AppFonts.button)
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 42)
+                HStack(spacing: 6) {
+                    Image(systemName: engine.isDrawing ? "stop.fill" : "play.fill")
+                        .font(.system(size: 13, weight: .semibold))
+                    if engine.isDrawing {
+                        let pct = Int(engine.drawProgress * 100)
+                        Text("\(pct)%")
+                            .font(AppFonts.button)
+                    } else {
+                        Text("D R A W")
+                            .font(AppFonts.button)
+                    }
+                }
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .frame(height: 42)
+                .background(drawGradient)
+                .clipShape(RoundedRectangle(cornerRadius: Layout.buttonRadius))
+                .scaleEffect(1.0)
             }
-            .buttonStyle(SpiroButtonStyle(color: AppColors.btnDraw.opacity(engine.isDrawing ? 0.75 : 1.0)))
+            .buttonStyle(GradientDrawButtonStyle())
 
-            // 4 equal action buttons (36pt)
+            // 4 equal action buttons (36pt) — glass material
             HStack(spacing: 6) {
                 Button(action: onUndo) {
-                    Text("↩ Undo")
-                        .font(AppFonts.button)
-                        .foregroundColor(engine.canUndo ? .white : .white.opacity(0.5))
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 36)
+                    GlassButtonLabel(symbol: "arrow.uturn.backward", text: "Undo")
+                        .foregroundStyle(engine.canUndo ? .white : .white.opacity(0.3))
                 }
-                .buttonStyle(SpiroButtonStyle(color: AppColors.btnUndo.opacity(engine.canUndo ? 1.0 : 0.4)))
+                .buttonStyle(GlassButtonStyle())
                 .disabled(!engine.canUndo)
 
                 Button(action: onClear) {
-                    Text("✕ Clear")
-                        .font(AppFonts.button)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 36)
+                    GlassButtonLabel(symbol: "trash.fill", text: "Clear")
                 }
-                .buttonStyle(SpiroButtonStyle(color: AppColors.btnClear))
+                .buttonStyle(GlassButtonStyle())
 
                 Button(action: onRandom) {
-                    Text("🎲")
-                        .font(.system(size: 18))
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 36)
+                    GlassButtonLabel(symbol: "shuffle", text: "Shuffle")
                 }
-                .buttonStyle(SpiroButtonStyle(color: AppColors.btnRandom))
+                .buttonStyle(GlassButtonStyle())
 
                 Button(action: onSave) {
-                    Text("💾")
-                        .font(.system(size: 18))
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 36)
+                    GlassButtonLabel(symbol: "square.and.arrow.up", text: "Save")
                 }
-                .buttonStyle(SpiroButtonStyle(color: AppColors.btnSave))
+                .buttonStyle(GlassButtonStyle())
             }
         }
         .padding(.horizontal, 12)
@@ -71,8 +76,58 @@ struct ButtonsCard: View {
     }
 }
 
-// MARK: - Button Style
+// MARK: - Glass Button Label
 
+private struct GlassButtonLabel: View {
+    let symbol: String
+    let text: String
+
+    var body: some View {
+        VStack(spacing: 2) {
+            Image(systemName: symbol)
+                .font(.system(size: 14, weight: .semibold))
+            Text(text)
+                .font(.system(size: 9, weight: .medium))
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 36)
+    }
+}
+
+// MARK: - Button Styles
+
+/// Gradient draw button — just handles press scale animation
+struct GradientDrawButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
+            .animation(.easeOut(duration: 0.1), value: configuration.isPressed)
+    }
+}
+
+/// Glass-material button style for the 4 action buttons
+struct GlassButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundColor(.white)
+            .background {
+                ZStack {
+                    RoundedRectangle(cornerRadius: Layout.buttonRadius)
+                        .fill(.thinMaterial)
+                    RoundedRectangle(cornerRadius: Layout.buttonRadius)
+                        .fill(Color.white.opacity(0.08))
+                }
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: Layout.buttonRadius)
+                    .stroke(AppColors.glassBorder, lineWidth: 1)
+            }
+            .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
+            .animation(.easeOut(duration: 0.1), value: configuration.isPressed)
+    }
+}
+
+// Legacy style kept for compatibility
 struct SpiroButtonStyle: ButtonStyle {
     let color: Color
 

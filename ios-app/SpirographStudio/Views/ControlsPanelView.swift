@@ -57,9 +57,21 @@ struct ControlsPanelView: View {
                 onSave: onSave
             )
         }
-        .background(AppColors.panel)
-        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-        .shadow(color: .black.opacity(0.3), radius: 8, y: -4)
+        .background {
+            ZStack {
+                RoundedRectangle(cornerRadius: Layout.panelRadius, style: .continuous)
+                    .fill(.ultraThinMaterial)
+                RoundedRectangle(cornerRadius: Layout.panelRadius, style: .continuous)
+                    .fill(LinearGradient(
+                        colors: [AppColors.glassHighlight, .clear],
+                        startPoint: .top, endPoint: .center))
+            }
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: Layout.panelRadius, style: .continuous)
+                .stroke(AppColors.glassBorder, lineWidth: 1)
+        }
+        .shadow(color: .black.opacity(0.5), radius: 24, y: -6)
     }
 
     private var pullIndicator: some View {

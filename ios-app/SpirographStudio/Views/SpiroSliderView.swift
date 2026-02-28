@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct SpiroSliderView: View {
-    let emoji: String
+    let sfSymbol: String
     let label: String
     @Binding var value: Double
     let minValue: Double
@@ -10,9 +10,15 @@ struct SpiroSliderView: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            Text(emoji)
-                .font(.system(size: 16))
-                .frame(width: 22)
+            // Icon pill: colored circle with SF Symbol
+            ZStack {
+                Circle()
+                    .fill(accentColor.opacity(0.18))
+                    .frame(width: 26, height: 26)
+                Image(systemName: sfSymbol)
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundColor(accentColor)
+            }
 
             CustomSliderTrack(value: $value,
                               minValue: minValue,
@@ -62,16 +68,18 @@ struct CustomSliderTrack: View {
                     .fill(AppColors.sliderTrack)
                     .frame(height: Layout.sliderHeight)
 
-                // Filled portion
+                // Filled portion — gradient
                 Capsule()
-                    .fill(accentColor)
+                    .fill(LinearGradient(
+                        colors: [accentColor.opacity(0.6), accentColor],
+                        startPoint: .leading, endPoint: .trailing))
                     .frame(width: max(thumbSize / 2, thumbX), height: Layout.sliderHeight)
 
                 // Thumb
                 Circle()
                     .fill(Color.white)
                     .frame(width: thumbSize, height: thumbSize)
-                    .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
+                    .shadow(color: accentColor.opacity(0.4), radius: 2, x: 0, y: 1)
                     .scaleEffect(isDragging ? 1.15 : 1.0)
                     .animation(.easeOut(duration: 0.1), value: isDragging)
                     .offset(x: thumbX - thumbSize / 2)
