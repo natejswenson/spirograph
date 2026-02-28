@@ -1,0 +1,573 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		049304D08E631874EB94AF6E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 25001F215BC749FC26E1B248 /* Assets.xcassets */; };
+		0C1211F1248539DBB333F932 /* MechanismPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65BE93D59A469A6B1095199D /* MechanismPreviewView.swift */; };
+		1C2D41E4BD63AD5E1BFA3DC3 /* ColorPickerCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F98924F47053904578D25F86 /* ColorPickerCard.swift */; };
+		1E18612F260B84BB09F804E9 /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = E55342CEC7E2F4C79998439F /* Layout.swift */; };
+		2AFA5BA7C9109543F14547F4 /* SpiroPreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFF942FDE11D50EBD674EDF7 /* SpiroPreset.swift */; };
+		33E3163847665A8C9B164561 /* TitleBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1A62245E1BDCC287707202 /* TitleBarView.swift */; };
+		3E05105110D9625F6354C140 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A2AD077AFF580EA6C3FA21F /* Photos.framework */; };
+		559FBA6F63CBE481F310E9B6 /* ControlsPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAE910A5135651585A41B055 /* ControlsPanelView.swift */; };
+		63AB6230730E8633B4AF9AFB /* SpiroMathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D2B6C4B753A3A1B2D2EB5F /* SpiroMathTests.swift */; };
+		675BE61875B4BBFC2328341F /* AppColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50E70C21B79B22AE9EB6516 /* AppColors.swift */; };
+		7BD42BE69A636D7366BBC13A /* DrawingEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4E6EFDA2DE0A86097606C2 /* DrawingEngine.swift */; };
+		7F32F1891F5E6F0C68E5C547 /* StatusBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06F535EF8BDBDC2C94E25F4E /* StatusBarView.swift */; };
+		8F1D49B42D9FE3C30E461005 /* AppFonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3AD941FEBA7C5D83D88612 /* AppFonts.swift */; };
+		91B8D06A8CAABF8A9068892E /* SpirographStudioApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25EDE08E2E04F8908E2EBAE5 /* SpirographStudioApp.swift */; };
+		9BC96E5CA22F1021C8612659 /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B19699D007810C46F022C0A2 /* ToastView.swift */; };
+		9E5A97BAB75E1C7961441334 /* SlidersCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AA4A4841FD55B099377200F /* SlidersCard.swift */; };
+		A1BFFA37EB552CA877FAD6C0 /* SpiroSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95595FBAE286F7CE5772285C /* SpiroSliderView.swift */; };
+		A31AA4909A42FAEE32F05683 /* CanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B981F1B91B0C4BE9E9CCAC5 /* CanvasView.swift */; };
+		D67A2A4703CB2F993C051B58 /* ColorMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6837C172E1EA41E7421680E3 /* ColorMode.swift */; };
+		DEDC23E552A81A4E6C98326A /* TutorialOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A193F2BBBE68501FE315F0 /* TutorialOverlayView.swift */; };
+		E07F32081E0BECE036ACCB18 /* ButtonsCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA43848D0C5F8F318FC164D1 /* ButtonsCard.swift */; };
+		E9BEA764A91AC9269145E993 /* SpiroMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592C60FAD09825930BD541CD /* SpiroMath.swift */; };
+		F5683640A6DDB937CB3CF367 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF63AE3414FBF87D84E5CF6B /* ContentView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		04B07207FCBBBC93F8DBE5DB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 49A37134B724E457BCDB097C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 66F89A42741D755947B89DA4;
+			remoteInfo = SpirographStudio;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		06F535EF8BDBDC2C94E25F4E /* StatusBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarView.swift; sourceTree = "<group>"; };
+		25001F215BC749FC26E1B248 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		25EDE08E2E04F8908E2EBAE5 /* SpirographStudioApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpirographStudioApp.swift; sourceTree = "<group>"; };
+		3B981F1B91B0C4BE9E9CCAC5 /* CanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasView.swift; sourceTree = "<group>"; };
+		4A2AD077AFF580EA6C3FA21F /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
+		592C60FAD09825930BD541CD /* SpiroMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpiroMath.swift; sourceTree = "<group>"; };
+		65BE93D59A469A6B1095199D /* MechanismPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MechanismPreviewView.swift; sourceTree = "<group>"; };
+		6837C172E1EA41E7421680E3 /* ColorMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorMode.swift; sourceTree = "<group>"; };
+		8AA4A4841FD55B099377200F /* SlidersCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlidersCard.swift; sourceTree = "<group>"; };
+		91308577DBE590A4A59BED26 /* SpirographStudio.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = SpirographStudio.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		95595FBAE286F7CE5772285C /* SpiroSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpiroSliderView.swift; sourceTree = "<group>"; };
+		AA1A62245E1BDCC287707202 /* TitleBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleBarView.swift; sourceTree = "<group>"; };
+		AC4D86405F8CC722D8475341 /* SpirographStudioTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = SpirographStudioTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B19699D007810C46F022C0A2 /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
+		BAE910A5135651585A41B055 /* ControlsPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlsPanelView.swift; sourceTree = "<group>"; };
+		CF63AE3414FBF87D84E5CF6B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		D3A193F2BBBE68501FE315F0 /* TutorialOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialOverlayView.swift; sourceTree = "<group>"; };
+		DA43848D0C5F8F318FC164D1 /* ButtonsCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonsCard.swift; sourceTree = "<group>"; };
+		E4D2B6C4B753A3A1B2D2EB5F /* SpiroMathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpiroMathTests.swift; sourceTree = "<group>"; };
+		E50E70C21B79B22AE9EB6516 /* AppColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColors.swift; sourceTree = "<group>"; };
+		E55342CEC7E2F4C79998439F /* Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Layout.swift; sourceTree = "<group>"; };
+		EC3AD941FEBA7C5D83D88612 /* AppFonts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppFonts.swift; sourceTree = "<group>"; };
+		EF4E6EFDA2DE0A86097606C2 /* DrawingEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingEngine.swift; sourceTree = "<group>"; };
+		EFF942FDE11D50EBD674EDF7 /* SpiroPreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpiroPreset.swift; sourceTree = "<group>"; };
+		F42AF90BDA7FED47DFC14573 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		F98924F47053904578D25F86 /* ColorPickerCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPickerCard.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0CAD64C6D5C19CFE34F9D95D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3E05105110D9625F6354C140 /* Photos.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		05F4BBB120509C6779972659 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				F42AF90BDA7FED47DFC14573 /* Info.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		10C57498B2DAADF5ACAE9FA5 /* Engine */ = {
+			isa = PBXGroup;
+			children = (
+				EF4E6EFDA2DE0A86097606C2 /* DrawingEngine.swift */,
+			);
+			path = Engine;
+			sourceTree = "<group>";
+		};
+		1D26CC7C0D63D13A4DD0EEA2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				91308577DBE590A4A59BED26 /* SpirographStudio.app */,
+				AC4D86405F8CC722D8475341 /* SpirographStudioTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		3892FEFAE9C4CD17EE187501 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				DA43848D0C5F8F318FC164D1 /* ButtonsCard.swift */,
+				3B981F1B91B0C4BE9E9CCAC5 /* CanvasView.swift */,
+				F98924F47053904578D25F86 /* ColorPickerCard.swift */,
+				BAE910A5135651585A41B055 /* ControlsPanelView.swift */,
+				65BE93D59A469A6B1095199D /* MechanismPreviewView.swift */,
+				8AA4A4841FD55B099377200F /* SlidersCard.swift */,
+				95595FBAE286F7CE5772285C /* SpiroSliderView.swift */,
+				06F535EF8BDBDC2C94E25F4E /* StatusBarView.swift */,
+				AA1A62245E1BDCC287707202 /* TitleBarView.swift */,
+				B19699D007810C46F022C0A2 /* ToastView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		4503AC6C5C97982F00F6738A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4A2AD077AFF580EA6C3FA21F /* Photos.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		627E1FC65A34762CDACD2941 /* Tutorial */ = {
+			isa = PBXGroup;
+			children = (
+				D3A193F2BBBE68501FE315F0 /* TutorialOverlayView.swift */,
+			);
+			path = Tutorial;
+			sourceTree = "<group>";
+		};
+		8A2DFA0DD808E4F82FF093DA /* SpirographStudio */ = {
+			isa = PBXGroup;
+			children = (
+				10C57498B2DAADF5ACAE9FA5 /* Engine */,
+				F89851ADE0010045C495C84A /* Math */,
+				A00143604C82B10B47AFBB83 /* Models */,
+				05F4BBB120509C6779972659 /* Resources */,
+				AAEFBD343E1BB8356781A5A6 /* Tests */,
+				FC41DB3D5283FD2BB488C26E /* Theme */,
+				627E1FC65A34762CDACD2941 /* Tutorial */,
+				3892FEFAE9C4CD17EE187501 /* Views */,
+				25001F215BC749FC26E1B248 /* Assets.xcassets */,
+				CF63AE3414FBF87D84E5CF6B /* ContentView.swift */,
+				25EDE08E2E04F8908E2EBAE5 /* SpirographStudioApp.swift */,
+			);
+			path = SpirographStudio;
+			sourceTree = "<group>";
+		};
+		A00143604C82B10B47AFBB83 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				6837C172E1EA41E7421680E3 /* ColorMode.swift */,
+				EFF942FDE11D50EBD674EDF7 /* SpiroPreset.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		AAEFBD343E1BB8356781A5A6 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				E4D2B6C4B753A3A1B2D2EB5F /* SpiroMathTests.swift */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		DCFFDF4DA5E51FCB12EBC36A = {
+			isa = PBXGroup;
+			children = (
+				8A2DFA0DD808E4F82FF093DA /* SpirographStudio */,
+				4503AC6C5C97982F00F6738A /* Frameworks */,
+				1D26CC7C0D63D13A4DD0EEA2 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F89851ADE0010045C495C84A /* Math */ = {
+			isa = PBXGroup;
+			children = (
+				592C60FAD09825930BD541CD /* SpiroMath.swift */,
+			);
+			path = Math;
+			sourceTree = "<group>";
+		};
+		FC41DB3D5283FD2BB488C26E /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				E50E70C21B79B22AE9EB6516 /* AppColors.swift */,
+				EC3AD941FEBA7C5D83D88612 /* AppFonts.swift */,
+				E55342CEC7E2F4C79998439F /* Layout.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		576C6CFD9A53AC4015B5598F /* SpirographStudioTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0B4A2C84AE8C7DE806C45E4A /* Build configuration list for PBXNativeTarget "SpirographStudioTests" */;
+			buildPhases = (
+				50CFC8221E36472A38841C49 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5AE47B9D322C95627FA645DD /* PBXTargetDependency */,
+			);
+			name = SpirographStudioTests;
+			packageProductDependencies = (
+			);
+			productName = SpirographStudioTests;
+			productReference = AC4D86405F8CC722D8475341 /* SpirographStudioTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		66F89A42741D755947B89DA4 /* SpirographStudio */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6477574FEF8D3856F09F14D2 /* Build configuration list for PBXNativeTarget "SpirographStudio" */;
+			buildPhases = (
+				3612C62F93948578CA5FE663 /* Sources */,
+				25DE304FC37BAC9B74C58441 /* Resources */,
+				0CAD64C6D5C19CFE34F9D95D /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SpirographStudio;
+			packageProductDependencies = (
+			);
+			productName = SpirographStudio;
+			productReference = 91308577DBE590A4A59BED26 /* SpirographStudio.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		49A37134B724E457BCDB097C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					66F89A42741D755947B89DA4 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 231B1DB3C1C2FC97A94B0A24 /* Build configuration list for PBXProject "SpirographStudio" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = DCFFDF4DA5E51FCB12EBC36A;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				66F89A42741D755947B89DA4 /* SpirographStudio */,
+				576C6CFD9A53AC4015B5598F /* SpirographStudioTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		25DE304FC37BAC9B74C58441 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				049304D08E631874EB94AF6E /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3612C62F93948578CA5FE663 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				675BE61875B4BBFC2328341F /* AppColors.swift in Sources */,
+				8F1D49B42D9FE3C30E461005 /* AppFonts.swift in Sources */,
+				E07F32081E0BECE036ACCB18 /* ButtonsCard.swift in Sources */,
+				A31AA4909A42FAEE32F05683 /* CanvasView.swift in Sources */,
+				D67A2A4703CB2F993C051B58 /* ColorMode.swift in Sources */,
+				1C2D41E4BD63AD5E1BFA3DC3 /* ColorPickerCard.swift in Sources */,
+				F5683640A6DDB937CB3CF367 /* ContentView.swift in Sources */,
+				559FBA6F63CBE481F310E9B6 /* ControlsPanelView.swift in Sources */,
+				7BD42BE69A636D7366BBC13A /* DrawingEngine.swift in Sources */,
+				1E18612F260B84BB09F804E9 /* Layout.swift in Sources */,
+				0C1211F1248539DBB333F932 /* MechanismPreviewView.swift in Sources */,
+				9E5A97BAB75E1C7961441334 /* SlidersCard.swift in Sources */,
+				E9BEA764A91AC9269145E993 /* SpiroMath.swift in Sources */,
+				2AFA5BA7C9109543F14547F4 /* SpiroPreset.swift in Sources */,
+				A1BFFA37EB552CA877FAD6C0 /* SpiroSliderView.swift in Sources */,
+				91B8D06A8CAABF8A9068892E /* SpirographStudioApp.swift in Sources */,
+				7F32F1891F5E6F0C68E5C547 /* StatusBarView.swift in Sources */,
+				33E3163847665A8C9B164561 /* TitleBarView.swift in Sources */,
+				9BC96E5CA22F1021C8612659 /* ToastView.swift in Sources */,
+				DEDC23E552A81A4E6C98326A /* TutorialOverlayView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		50CFC8221E36472A38841C49 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				63AB6230730E8633B4AF9AFB /* SpiroMathTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5AE47B9D322C95627FA645DD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 66F89A42741D755947B89DA4 /* SpirographStudio */;
+			targetProxy = 04B07207FCBBBC93F8DBE5DB /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		88DA21BB47F47DD4DDF1DE6F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_BITCODE = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = minimal;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		A300BE07154D77717CFC1BFF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.spirographstudio.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SpirographStudio.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SpirographStudio";
+			};
+			name = Release;
+		};
+		A816348144C4C6EE5A0E6E5C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = SpirographStudio/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.spirographstudio.app;
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C10E080C62C329E9C4FC0FCE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.spirographstudio.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SpirographStudio.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SpirographStudio";
+			};
+			name = Debug;
+		};
+		DACAA6E44B150284E4DA2566 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = SpirographStudio/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.spirographstudio.app;
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		F5FEDA89D96B58504DF06A5C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_BITCODE = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = minimal;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0B4A2C84AE8C7DE806C45E4A /* Build configuration list for PBXNativeTarget "SpirographStudioTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C10E080C62C329E9C4FC0FCE /* Debug */,
+				A300BE07154D77717CFC1BFF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		231B1DB3C1C2FC97A94B0A24 /* Build configuration list for PBXProject "SpirographStudio" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				88DA21BB47F47DD4DDF1DE6F /* Debug */,
+				F5FEDA89D96B58504DF06A5C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		6477574FEF8D3856F09F14D2 /* Build configuration list for PBXNativeTarget "SpirographStudio" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A816348144C4C6EE5A0E6E5C /* Debug */,
+				DACAA6E44B150284E4DA2566 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 49A37134B724E457BCDB097C /* Project object */;
+}
